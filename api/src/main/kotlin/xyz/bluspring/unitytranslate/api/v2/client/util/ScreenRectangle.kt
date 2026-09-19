@@ -41,6 +41,10 @@ data class ScreenRectangle(
     fun containsPoint(x: Int, y: Int): Boolean
         = x >= this.left && x < this.right && y >= this.top && y < this.bottom
 
+    fun contains(other: ScreenRectangle): Boolean {
+        return this.x >= other.x && this.y >= other.y && this.x + this.width <= other.x + other.width && this.y + this.height <= other.y + other.height
+    }
+
     fun overlaps(other: ScreenRectangle): Boolean = this.overlapsInAxis(other, ScreenAxis.HORIZONTAL) && this.overlapsInAxis(other, ScreenAxis.VERTICAL)
 
     fun overlapsInAxis(other: ScreenRectangle, axis: ScreenAxis): Boolean {
