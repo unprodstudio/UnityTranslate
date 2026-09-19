@@ -15,7 +15,9 @@ import net.minecraft.client.renderer.GameRenderer;
 public abstract class GameRendererMixin {
     @Inject(method = "extract", at = @At("TAIL"))
     private void extractBatchedScreen(DeltaTracker deltaTracker, boolean advanceGameTime, CallbackInfo ci) {
-        UnityTranslateGui.INSTANCE.submitLate(new BatchedUIGraphics(BatchedGuiRenderer.DrawLayer.SCREEN), deltaTracker.getGameTimeDeltaPartialTick(true));
+        var graphics = new BatchedUIGraphics(BatchedGuiRenderer.DrawLayer.SCREEN);
+        UnityTranslateGui.INSTANCE.submitLate(graphics, deltaTracker.getGameTimeDeltaPartialTick(true));
+        graphics.flushLastLayer();
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render()V"))

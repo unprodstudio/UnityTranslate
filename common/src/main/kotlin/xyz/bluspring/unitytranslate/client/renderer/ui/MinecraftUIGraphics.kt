@@ -13,6 +13,8 @@ import xyz.bluspring.unitytranslate.api.v2.client.gui.TextureReference
 import xyz.bluspring.unitytranslate.api.v2.client.gui.UIGraphics
 import xyz.bluspring.unitytranslate.api.v2.client.gui.font.FontReference
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
+import xyz.bluspring.unitytranslate.client.ClientPlatformProxy
+import xyz.bluspring.unitytranslate.client.renderer.ui.font.FreeTypeFontReference
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.MinecraftFontReference
 import xyz.bluspring.unitytranslate.client.renderer.ui.minecraft.ColoredBlitRenderState
 import xyz.bluspring.unitytranslate.client.renderer.ui.minecraft.ColoredMeshBlitRenderState
@@ -21,6 +23,7 @@ import xyz.bluspring.unitytranslate.client.renderer.ui.minecraft.GradientedMeshF
 import xyz.bluspring.unitytranslate.client.renderer.ui.texture.AbstractTextureReference
 import xyz.bluspring.unitytranslate.mixin.accessor.GuiGraphicsExtractorAccessor
 import xyz.bluspring.unitytranslate.util.PlatformConversion.asMinecraft
+import kotlin.math.roundToInt
 
 class MinecraftUIGraphics(private val graphics: GuiGraphicsExtractor) : UIGraphics {
     private val GuiGraphicsExtractor.guiRenderState: GuiRenderState
@@ -29,21 +32,49 @@ class MinecraftUIGraphics(private val graphics: GuiGraphicsExtractor) : UIGraphi
     private val GuiGraphicsExtractor.scissor: ScreenRectangle?
         get() = (this as GuiGraphicsExtractorAccessor).`unityTranslate$getScissorStack`().peek()
 
+    val awtRenderer = AWTRenderer()
+
+    private val visibleArea: ScreenRectangle
+        get() {
+            if (this.graphics.scissor != null)
+                return this.graphics.scissor!!
+
+            return ScreenRectangle(0, 0, this.width, this.height)
+        }
+
+    init {
+        awtRenderer.pushLayer(0, 0, this.width, this.height)
+    }
+
+    private val guiScale: Double
+        get() = ClientPlatformProxy.instance.guiScale
+
     override val width: Int
         get() = graphics.guiWidth()
     override val height: Int
         get() = graphics.guiHeight()
 
     override fun enableScissor(x: Int, y: Int, width: Int, height: Int) {
+        awtRenderer.flushLayer(this)
         graphics.enableScissor(x, y, x + width, y + height)
+        awtRenderer.pushLayer((x * guiScale).roundToInt(), (y * guiScale).roundToInt(), (width * guiScale).roundToInt(), (height * guiScale.roundToInt()))
     }
 
     override fun disableScissor() {
+        awtRenderer.flushLayer(this)
         graphics.disableScissor()
+
+        val area = this.visibleArea
+        awtRenderer.pushLayer((area.left() * guiScale).roundToInt(), (area.top() * guiScale).roundToInt(), (area.width * guiScale).roundToInt(), (area.height * guiScale.roundToInt()))
     }
 
     override fun text(font: FontReference, text: TextComponent, x: Float, y: Float, color: Int, dropShadow: Boolean) {
-        graphics.text((font as MinecraftFontReference).font, text.asMinecraft(), x.toInt(), y.toInt(), color, dropShadow)
+        if (font is MinecraftFontReference) {
+            graphics.text(font.font, text.asMinecraft(), x.toInt(), y.toInt(), color, dropShadow)
+        } else if (font is FreeTypeFontReference) {
+            font.awtRenderer = this.awtRenderer
+            font.draw(graphics.pose(), text, x, y, color, dropShadow)
+        }
     }
 
     override fun fill(
@@ -147,5 +178,9 @@ class MinecraftUIGraphics(private val graphics: GuiGraphicsExtractor) : UIGraphi
 
     override fun popMatrix() {
         this.graphics.pose().popMatrix()
+    }
+
+    fun flushLastLayer() {
+        this.awtRenderer.flushLayer(this)
     }
 }

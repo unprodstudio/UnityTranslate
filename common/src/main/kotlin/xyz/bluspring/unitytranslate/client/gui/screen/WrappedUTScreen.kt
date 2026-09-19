@@ -32,7 +32,9 @@ class WrappedUTScreen(val actualScreen: UTScreen, private val parent: Screen? = 
 
     override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
         super.extractRenderState(graphics, mouseX, mouseY, a)
-        actualScreen.submit(MinecraftUIGraphics(graphics), Minecraft.getInstance().deltaTracker.getGameTimeDeltaPartialTick(true), mouseX, mouseY)
+        val g = MinecraftUIGraphics(graphics)
+        actualScreen.submit(g, Minecraft.getInstance().deltaTracker.getGameTimeDeltaPartialTick(true), mouseX, mouseY)
+        g.flushLastLayer()
     }
 
     override fun mouseClicked(event: MouseButtonEvent, doubleClick: Boolean): Boolean {

@@ -5,7 +5,7 @@ import com.mojang.blaze3d.textures.GpuTexture
 import com.mojang.blaze3d.textures.GpuTextureView
 
 data class DirectTextureReference(
-    val texture: GpuTexture
+    val texture: GpuTexture,
 ) : CloseableTextureReference("direct") {
     override val textureView: GpuTextureView = RenderSystem.getDevice().createTextureView(this.texture)
 

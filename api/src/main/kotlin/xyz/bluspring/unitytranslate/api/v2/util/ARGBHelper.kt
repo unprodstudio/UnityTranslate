@@ -50,6 +50,16 @@ object ARGBHelper {
     }
 
     @JvmStatic
+    inline fun Int.splitToInts(): ColorPair<Int> {
+        return ColorPair(this.alpha(), this.red(), this.green(), this.blue())
+    }
+
+    @JvmStatic
+    inline fun Int.splitToFloats(): ColorPair<Float> {
+        return ColorPair(this.alpha() / 255f, this.red() / 255f, this.green() / 255f, this.blue() / 255f)
+    }
+
+    @JvmStatic
     inline fun color(a: Int, r: Int, g: Int, b: Int): Int {
         // 0xFF_FF_FF_FF
         return (a shl 24) or (r shl 16) or (g shl 8) or b
@@ -81,7 +91,18 @@ object ARGBHelper {
         return srgbLerp(topXLerp, bottomXLerp, deltaY)
     }
 
+    @JvmStatic
+    inline fun multiply(from: Int, to: Int): Int {
+        val (fromA, fromR, fromG, fromB) = from.splitToFloats()
+        val (toA, toR, toG, toB) = to.splitToFloats()
+
+        return colorFromFloat(fromA * toA, fromR * toR, fromG * toG, fromB * toB)
+    }
+
     private fun lerp(from: Int, to: Int, delta: Float): Int {
         return from + floor(delta * (to - from).toFloat()).toInt()
     }
+
+    @JvmRecord
+    data class ColorPair<N : Number>(val a: N, val r: N, val g: N, val b: N)
 }

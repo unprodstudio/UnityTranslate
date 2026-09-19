@@ -26,7 +26,9 @@ class UnityTranslateFabricClient : ClientModInitializer {
 
         HudElementRegistry.attachElementBefore(VanillaHudElements.CHAT, UnityTranslate.id("transcript_boxes")) { graphics, deltaTracker ->
             val mouse = Minecraft.getInstance().mouseHandler
-            UnityTranslateGui.submit(MinecraftUIGraphics(graphics), deltaTracker.getGameTimeDeltaPartialTick(true), mouse.xpos() / ClientPlatformProxy.instance.guiScale, mouse.ypos() / ClientPlatformProxy.instance.guiScale)
+            val g = MinecraftUIGraphics(graphics)
+            UnityTranslateGui.submit(g, deltaTracker.getGameTimeDeltaPartialTick(true), mouse.xpos() / ClientPlatformProxy.instance.guiScale, mouse.ypos() / ClientPlatformProxy.instance.guiScale)
+            g.flushLastLayer()
         }
 
         var shouldStartFirstLaunch = false

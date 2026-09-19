@@ -1,12 +1,13 @@
 package xyz.bluspring.unitytranslate.client.renderer.ui
 
-import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.font.TextRenderable
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.util.LightCoordsUtil
 import net.minecraft.util.Mth
-import org.joml.Quaternionf
+import org.joml.Matrix3x2fStack
+import org.joml.Matrix3x2fc
+import org.joml.Matrix4f
 import xyz.bluspring.unitytranslate.api.v2.client.gui.TextureReference
 import xyz.bluspring.unitytranslate.api.v2.client.gui.UIGraphics
 import xyz.bluspring.unitytranslate.api.v2.client.gui.font.FontReference
@@ -14,54 +15,89 @@ import xyz.bluspring.unitytranslate.api.v2.client.util.ScreenRectangle
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
 import xyz.bluspring.unitytranslate.client.ClientPlatformProxy
 import xyz.bluspring.unitytranslate.client.renderer.BatchedGuiRenderer
+import xyz.bluspring.unitytranslate.client.renderer.ui.font.FreeTypeFontReference
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.MinecraftFontReference
 import xyz.bluspring.unitytranslate.client.renderer.ui.texture.AbstractTextureReference
 import xyz.bluspring.unitytranslate.util.PlatformConversion.asMinecraft
 import java.util.*
+import kotlin.math.roundToInt
 
 class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : UIGraphics {
-    val poseStack = PoseStack()
+    val matrixStack = Matrix3x2fStack()
     private val scissorState = Stack<ScreenRectangle>()
     private val currentScissor: ScreenRectangle?
         get() = if (this.scissorState.isEmpty()) null else this.scissorState.peek()
 
-    override val width: Int
-        get() = (ClientPlatformProxy.instance.framebuffer.width.toFloat() / ClientPlatformProxy.instance.guiScale.toFloat()).toInt()
+    val awtRenderer = AWTRenderer()
 
-    override val height: Int
-        get() = (ClientPlatformProxy.instance.framebuffer.height.toFloat() / ClientPlatformProxy.instance.guiScale.toFloat()).toInt()
+    private val visibleArea: ScreenRectangle
+        get() {
+            if (this.currentScissor != null)
+                return this.currentScissor!!
+
+            return ScreenRectangle(0, 0, this.width, this.height)
+        }
+
+    override val width: Int = (ClientPlatformProxy.instance.framebuffer.width.toFloat() / ClientPlatformProxy.instance.guiScale.toFloat()).toInt()
+    override val height: Int = (ClientPlatformProxy.instance.framebuffer.height.toFloat() / ClientPlatformProxy.instance.guiScale.toFloat()).toInt()
+
+    private val guiScale: Double
+        get() = ClientPlatformProxy.instance.guiScale
+
+    private fun Matrix3x2fc.peek(): Matrix4f {
+        return Matrix4f(
+            this.m00(), this.m01(), 0f, 0f,
+            this.m10(), this.m11(), 0f, 0f,
+            0f, 0f, 1f, 0f,
+            this.m20(), this.m21(), 0f, 1f
+        )
+    }
+
+    init {
+        awtRenderer.pushLayer(0, 0, this.width, this.height)
+    }
 
     override fun enableScissor(x: Int, y: Int, width: Int, height: Int) {
+        awtRenderer.flushLayer(this)
         this.scissorState.push(ScreenRectangle(x, y, width, height))
+        awtRenderer.pushLayer((x * guiScale).roundToInt(), (y * guiScale).roundToInt(), (width * guiScale).roundToInt(), (height * guiScale.roundToInt()))
     }
 
     override fun disableScissor() {
+        awtRenderer.flushLayer(this)
         this.scissorState.pop()
+
+        val (x, y, width, height) = this.visibleArea
+        awtRenderer.pushLayer((x * guiScale).roundToInt(), (y * guiScale).roundToInt(), (width * guiScale).roundToInt(), (height * guiScale.roundToInt()))
     }
 
     override fun text(font: FontReference, text: TextComponent, x: Float, y: Float, color: Int, dropShadow: Boolean) {
-        val pose = poseStack.last()
-        val prepared = (font as MinecraftFontReference).font.prepareText(text.asMinecraft().visualOrderText, x, y, color, dropShadow, true, 0)
-        prepared.visit(object : Font.GlyphVisitor {
-            override fun acceptEffect(effect: TextRenderable) {
-                accept(effect)
-            }
+        if (font is MinecraftFontReference) {
+            val prepared = font.font.prepareText(text.asMinecraft().visualOrderText, x, y, color, dropShadow, true, 0)
+            prepared.visit(object : Font.GlyphVisitor {
+                override fun acceptEffect(effect: TextRenderable) {
+                    accept(effect)
+                }
 
-            override fun acceptGlyph(glyph: TextRenderable.Styled) {
-                accept(glyph)
-            }
+                override fun acceptGlyph(glyph: TextRenderable.Styled) {
+                    accept(glyph)
+                }
 
-            private fun accept(glyph: TextRenderable) {
-                val consumer = BatchedGuiRenderer.getBuffer(glyph.guiPipeline(), textures = listOf(
-                    BatchedGuiRenderer.Texture("Sampler0", glyph.textureView())
-                ), scissor = currentScissor, layer = this@BatchedUIGraphics.layer)
-                glyph.render(pose.pose(), consumer, LightCoordsUtil.FULL_BRIGHT, false)
-            }
-        })
+                private fun accept(glyph: TextRenderable) {
+                    val consumer = BatchedGuiRenderer.getBuffer(glyph.guiPipeline(), textures = listOf(
+                        BatchedGuiRenderer.Texture("Sampler0", glyph.textureView())
+                    ), scissor = currentScissor, layer = this@BatchedUIGraphics.layer)
+                    glyph.render(matrixStack.peek(), consumer, LightCoordsUtil.FULL_BRIGHT, false)
+                }
+            })
+        } else if (font is FreeTypeFontReference) {
+            font.awtRenderer = this.awtRenderer
+            font.draw(this.matrixStack, text, x, y, color, dropShadow)
+        }
     }
 
     override fun fill(x1: Float, y1: Float, x2: Float, y2: Float, colorTopLeft: Int, colorTopRight: Int, colorBottomLeft: Int, colorBottomRight: Int) {
-        val pose = poseStack.last()
+        val pose = matrixStack.peek()
         val buffer = BatchedGuiRenderer.getBuffer(RenderPipelines.GUI, layer = this.layer)
         buffer.addVertex(pose, x1, y1, 0f).setColor(colorTopLeft)
         buffer.addVertex(pose, x1, y2, 0f).setColor(colorBottomLeft)
@@ -79,7 +115,7 @@ class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : UIGra
         if (texture !is AbstractTextureReference)
             throw IllegalStateException("You are not supposed to extend TextureReference! Currently using ${texture::class.java.name}")
 
-        val pose = poseStack.last()
+        val pose = matrixStack.peek()
         val buffer = BatchedGuiRenderer.getBuffer(RenderPipelines.GUI_TEXTURED, listOf(BatchedGuiRenderer.Texture("Sampler0", texture.textureView)), scissor = currentScissor, layer = this@BatchedUIGraphics.layer)
 
         val uStart = ((u0 * texture.width) + (texture.u0 * texture.imageWidth)) / texture.imageWidth
@@ -107,7 +143,7 @@ class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : UIGra
         color1: Int, color2: Int,
         color3: Int, color4: Int
     ) {
-        val pose = this.poseStack.last().pose()
+        val pose = this.matrixStack.peek()
         val consumer = BatchedGuiRenderer.getBuffer(RenderPipelines.GUI, scissor = currentScissor, layer = this@BatchedUIGraphics.layer)
         consumer.addVertex(pose, x1, y1, 0f) // top left
             .setColor(color1)
@@ -132,7 +168,7 @@ class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : UIGra
         if (texture !is AbstractTextureReference)
             throw IllegalStateException("You are not supposed to extend TextureReference! Currently using ${texture::class.java.name}")
 
-        val pose = this.poseStack.last().pose()
+        val pose = this.matrixStack.peek()
         val consumer = BatchedGuiRenderer.getBuffer(RenderPipelines.GUI_TEXTURED, listOf(BatchedGuiRenderer.Texture("Sampler0", texture.textureView)), scissor = currentScissor, layer = this@BatchedUIGraphics.layer)
         consumer.addVertex(pose, x1, y1, 0f) // top left
             .setUv(u1, v1)
@@ -148,10 +184,28 @@ class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : UIGra
             .setColor(color2)
     }
 
-    override fun pushMatrix() = this.poseStack.pushPose()
-    override fun translate(x: Float, y: Float) = this.poseStack.translate(x, y, 0f)
-    override fun rotate(degrees: Float) = this.poseStack.mulPose(Quaternionf().rotateXYZ(degrees * Mth.DEG_TO_RAD, 0f, 0f))
-    override fun scale(x: Float, y: Float) = this.poseStack.scale(x, y, 1f)
-    override fun popMatrix() = this.poseStack.popPose()
+    override fun pushMatrix() {
+        this.matrixStack.pushMatrix()
+    }
+
+    override fun translate(x: Float, y: Float) {
+        this.matrixStack.translate(x, y)
+    }
+
+    override fun rotate(degrees: Float) {
+        this.matrixStack.rotate(degrees * Mth.DEG_TO_RAD)
+    }
+
+    override fun scale(x: Float, y: Float) {
+        this.matrixStack.scale(x, y)
+    }
+
+    override fun popMatrix() {
+        this.matrixStack.popMatrix()
+    }
+
+    fun flushLastLayer() {
+        this.awtRenderer.flushLayer(this)
+    }
 }
 
