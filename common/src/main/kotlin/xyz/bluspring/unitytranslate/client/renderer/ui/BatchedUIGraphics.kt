@@ -96,7 +96,7 @@ class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : UIGra
             })
         } else if (font is FreeTypeFontReference) {
             font.awtRenderer = this.awtRenderer
-            font.draw(this.matrixStack, text, x, y, color, dropShadow)
+            font.draw(this.matrixStack, text, x, y, color, dropShadow, guiScale.toFloat())
         }
     }
 

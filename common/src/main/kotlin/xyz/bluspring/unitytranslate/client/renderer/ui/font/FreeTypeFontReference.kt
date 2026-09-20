@@ -99,11 +99,14 @@ class FreeTypeFontReference(stream: InputStream, val fontSize: Float) : FontRefe
         return main
     }
 
-    fun draw(matrix: Matrix3x2fc, text: TextComponent, x: Float, y: Float, color: Int, dropShadow: Boolean) {
+    fun draw(matrix: Matrix3x2fc, text: TextComponent, x: Float, y: Float, color: Int, dropShadow: Boolean, guiScale: Float) {
         val layer = this.awtRenderer.peek()
         val matrix = Matrix3x2f(matrix)
         matrix.mul(layer.matrix.invert(Matrix3x2f()))
         matrix.translate(-layer.x.toFloat(), -layer.y.toFloat())
+
+        val x = x * guiScale
+        val y = y * guiScale
 
         val graphics = layer.image.createGraphics()
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
@@ -114,7 +117,7 @@ class FreeTypeFontReference(stream: InputStream, val fontSize: Float) : FontRefe
         var currentX = x
         text.visit({ component, style ->
             val currentColor = ARGBHelper.multiply((style.color ?: -1), color)
-            val font = this.font.deriveFont(style.asAwtStyle)
+            val font = this.font.deriveFont(style.asAwtStyle, this.font.size2D * guiScale)
             graphics.font = font
 
             val bounds = font.getStringBounds(component, graphics.fontRenderContext)
@@ -128,7 +131,7 @@ class FreeTypeFontReference(stream: InputStream, val fontSize: Float) : FontRefe
 
             if (dropShadow) {
                 graphics.color = Color(ARGBHelper.multiply(currentColor, ARGBHelper.colorFromFloat(1f, 0.2f, 0.2f, 0.2f)))
-                graphics.drawString(component, currentX + 1, y + 1)
+                graphics.drawString(component, currentX + guiScale, y + guiScale)
                 graphics.color = Color(currentColor)
             }
 

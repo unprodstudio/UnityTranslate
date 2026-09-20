@@ -14,6 +14,7 @@ import xyz.bluspring.unitytranslate.api.v2.client.gui.TextureReference
 import xyz.bluspring.unitytranslate.api.v2.client.gui.UIGraphics
 import xyz.bluspring.unitytranslate.api.v2.client.gui.font.FontReference
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
+import xyz.bluspring.unitytranslate.api.v2.util.ARGBHelper
 import xyz.bluspring.unitytranslate.client.ClientPlatformProxy
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.FreeTypeFontReference
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.MinecraftFontReference
@@ -56,7 +57,7 @@ class MinecraftUIGraphics(private val graphics: GuiGraphicsExtractor) : UIGraphi
 
     override fun enableScissor(x: Int, y: Int, width: Int, height: Int) {
         awtRenderer.flushLayer(this)
-//        this.outline(x.toFloat(), y.toFloat(), x + width.toFloat(), y + height.toFloat(), 2f, ARGBHelper.color(255, 255, 0, 0))
+        this.outline(x.toFloat(), y.toFloat(), x + width.toFloat(), y + height.toFloat(), 2f, ARGBHelper.color(255, 255, 0, 0))
         graphics.enableScissor(x, y, x + width, y + height)
         awtRenderer.pushLayer(x, y, width, height, Matrix3x2f(this.graphics.pose()))
     }
@@ -78,7 +79,7 @@ class MinecraftUIGraphics(private val graphics: GuiGraphicsExtractor) : UIGraphi
             graphics.text(font.font, text.asMinecraft(), x.toInt(), y.toInt(), color, dropShadow)
         } else if (font is FreeTypeFontReference) {
             font.awtRenderer = this.awtRenderer
-            font.draw(graphics.pose(), text, x, y, color, dropShadow)
+            font.draw(graphics.pose(), text, x, y, color, dropShadow, guiScale.toFloat())
         }
     }
 
