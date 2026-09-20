@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.bluspring.unitytranslate.client.renderer.BatchedGuiRenderer;
 import xyz.bluspring.unitytranslate.client.renderer.UnityTranslateGui;
+import xyz.bluspring.unitytranslate.client.renderer.ui.AWTRenderer;
 import xyz.bluspring.unitytranslate.client.renderer.ui.BatchedUIGraphics;
 
 import net.minecraft.client.DeltaTracker;
@@ -21,12 +22,17 @@ public abstract class GameRendererMixin {
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render()V"))
-    private void renderBatchedGui(DeltaTracker deltaTracker, boolean advanceGameTime, CallbackInfo ci) {
+    private void renderBatchedGui(CallbackInfo ci) {
         BatchedGuiRenderer.INSTANCE.render(BatchedGuiRenderer.DrawLayer.IN_GAME);
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render()V", shift = At.Shift.AFTER))
-    private void renderBatchedScreen(DeltaTracker deltaTracker, boolean advanceGameTime, CallbackInfo ci) {
+    private void renderBatchedScreen(CallbackInfo ci) {
         BatchedGuiRenderer.INSTANCE.render(BatchedGuiRenderer.DrawLayer.SCREEN);
+    }
+
+    @Inject(method = "render", at = @At("TAIL"))
+    private void resetAWTRenderer(CallbackInfo ci) {
+        AWTRenderer.Companion.resetAllLayers();
     }
 }

@@ -5,8 +5,8 @@ import com.mojang.blaze3d.GpuFormat
 import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.textures.GpuTexture
+import org.joml.Matrix3x2f
 import xyz.bluspring.unitytranslate.api.v2.client.gui.UIGraphics
-import xyz.bluspring.unitytranslate.client.ClientPlatformProxy
 import xyz.bluspring.unitytranslate.client.renderer.ui.texture.DirectTextureReference
 import java.awt.AlphaComposite
 import java.awt.image.BufferedImage
@@ -15,9 +15,12 @@ import java.util.*
 class AWTRenderer {
     private val layers = Stack<Layer>()
 
+    private val renderedLayers = mutableListOf<Layer>()
+
     data class Layer(
         val x: Int, val y: Int,
         val width: Int, val height: Int,
+        val matrix: Matrix3x2f,
     ) {
         var hasImage = false
             private set
@@ -32,8 +35,8 @@ class AWTRenderer {
         }
     }
 
-    fun pushLayer(x: Int, y: Int, width: Int, height: Int) {
-        this.layers.push(Layer(x, y, width, height))
+    fun pushLayer(x: Int, y: Int, width: Int, height: Int, matrix: Matrix3x2f) {
+        this.layers.push(Layer(x, y, width, height, matrix))
     }
 
     fun peek(): Layer {
@@ -46,12 +49,26 @@ class AWTRenderer {
             val encoder = RenderSystem.getDevice().createCommandEncoder()
             encoder.writeToTexture(layer.reference.texture.texture, layer.reference.copyToImage())
 
-            val guiScale = ClientPlatformProxy.instance.guiScale.toFloat()
-
-            graphics.blit((layer.x / guiScale), (layer.y / guiScale), (layer.x.toFloat() + layer.width.toFloat()) / guiScale, (layer.y.toFloat() + layer.height.toFloat()) / guiScale,
+            graphics.pushMatrix()
+            graphics.set(layer.matrix)
+            graphics.blit(layer.x.toFloat(), layer.y.toFloat(), layer.x.toFloat() + layer.width.toFloat(), layer.y.toFloat() + layer.height.toFloat(),
                 0f, 0f, 1f, 1f, layer.reference.texture)
+            graphics.popMatrix()
+
+            this.renderedLayers.add(layer)
 
             dereferenceLayer(layer.width, layer.height, layer.reference)
+        }
+    }
+
+    fun flushLast(graphics: UIGraphics) {
+        this.flushLayer(graphics)
+
+        for (layer in this.renderedLayers) {
+            graphics.pushMatrix()
+            graphics.set(layer.matrix)
+            graphics.outline(layer.x.toFloat(), layer.y.toFloat(), (layer.x + layer.width).toFloat(), (layer.y + layer.height).toFloat(), 1f, -1)
+            graphics.popMatrix()
         }
     }
 
@@ -74,6 +91,7 @@ class AWTRenderer {
 
         private val imageLayers = HashMultimap.create<Size2i, LayerReference>()
         private val allocatedLayers = HashMultimap.create<Size2i, Int>()
+        private val clearingLayers = HashMultimap.create<Size2i, LayerReference>()
 
         fun tryAllocateLayer(width: Int, height: Int): LayerReference {
             val size = Size2i(width, height)
@@ -102,19 +120,31 @@ class AWTRenderer {
             return reference
         }
 
-        fun dereferenceLayer(width: Int, height: Int, texture: LayerReference) {
+        fun dereferenceLayer(width: Int, height: Int, reference: LayerReference) {
             val size = Size2i(width, height)
+            this.clearingLayers.put(size, reference)
+        }
+
+        private fun resetLayer(size: Size2i, reference: LayerReference) {
             val references = this.imageLayers.get(size)
 
-            val index = references.indexOf(texture)
+            val index = references.indexOf(reference)
             this.allocatedLayers.remove(size, index)
 
             // clear the image
-            val graphics = texture.image.createGraphics()
+            val graphics = reference.image.createGraphics()
             graphics.composite = AlphaComposite.Clear
-            graphics.fillRect(0, 0, width, height)
+            graphics.fillRect(0, 0, size.width, size.height)
             graphics.composite = AlphaComposite.SrcOver
             graphics.dispose()
+        }
+
+        fun resetAllLayers() {
+            for ((size, reference) in this.clearingLayers.entries()) {
+                this.resetLayer(size, reference)
+            }
+
+            this.clearingLayers.clear()
         }
     }
 }

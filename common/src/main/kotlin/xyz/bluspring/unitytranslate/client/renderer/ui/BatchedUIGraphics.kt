@@ -5,6 +5,7 @@ import net.minecraft.client.gui.font.TextRenderable
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.util.LightCoordsUtil
 import net.minecraft.util.Mth
+import org.joml.Matrix3x2f
 import org.joml.Matrix3x2fStack
 import org.joml.Matrix3x2fc
 import org.joml.Matrix4f
@@ -20,7 +21,6 @@ import xyz.bluspring.unitytranslate.client.renderer.ui.font.MinecraftFontReferen
 import xyz.bluspring.unitytranslate.client.renderer.ui.texture.AbstractTextureReference
 import xyz.bluspring.unitytranslate.util.PlatformConversion.asMinecraft
 import java.util.*
-import kotlin.math.roundToInt
 
 class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : UIGraphics {
     val matrixStack = Matrix3x2fStack()
@@ -54,13 +54,13 @@ class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : UIGra
     }
 
     init {
-        awtRenderer.pushLayer(0, 0, this.width, this.height)
+        awtRenderer.pushLayer(0, 0, this.width, this.height, Matrix3x2f())
     }
 
     override fun enableScissor(x: Int, y: Int, width: Int, height: Int) {
         awtRenderer.flushLayer(this)
         this.scissorState.push(ScreenRectangle(x, y, width, height))
-        awtRenderer.pushLayer((x * guiScale).roundToInt(), (y * guiScale).roundToInt(), (width * guiScale).roundToInt(), (height * guiScale.roundToInt()))
+        awtRenderer.pushLayer(x, y, width, height, Matrix3x2f(this.matrixStack))
     }
 
     override fun disableScissor() {
@@ -68,7 +68,11 @@ class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : UIGra
         this.scissorState.pop()
 
         val (x, y, width, height) = this.visibleArea
-        awtRenderer.pushLayer((x * guiScale).roundToInt(), (y * guiScale).roundToInt(), (width * guiScale).roundToInt(), (height * guiScale.roundToInt()))
+        val matrix = Matrix3x2f()
+        if (this.currentScissor != null)
+            matrix.set(this.matrixStack)
+
+        awtRenderer.pushLayer(x, y, width, height, matrix)
     }
 
     override fun text(font: FontReference, text: TextComponent, x: Float, y: Float, color: Int, dropShadow: Boolean) {
@@ -188,6 +192,10 @@ class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : UIGra
         this.matrixStack.pushMatrix()
     }
 
+    override fun set(matrix: Matrix3x2fc) {
+        this.matrixStack.set(matrix)
+    }
+
     override fun translate(x: Float, y: Float) {
         this.matrixStack.translate(x, y)
     }
@@ -205,7 +213,7 @@ class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : UIGra
     }
 
     fun flushLastLayer() {
-        this.awtRenderer.flushLayer(this)
+        this.awtRenderer.flushLast(this)
     }
 }
 

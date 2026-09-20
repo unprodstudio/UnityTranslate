@@ -1,5 +1,6 @@
 package xyz.bluspring.unitytranslate.api.v2.client.gui
 
+import org.joml.Matrix3x2fc
 import xyz.bluspring.unitytranslate.api.v2.client.gui.font.FontReference
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
 import xyz.bluspring.unitytranslate.api.v2.util.ARGBHelper
@@ -92,6 +93,7 @@ interface UIGraphics {
     fun blitWithColor(x1: Float, y1: Float, x2: Float, y2: Float, u0: Float, v0: Float, u1: Float, v1: Float, texture: TextureReference, colorTopLeft: Int, colorTopRight: Int, colorBottomLeft: Int, colorBottomRight: Int)
 
     fun pushMatrix()
+    fun set(matrix: Matrix3x2fc)
     fun translate(x: Float, y: Float)
     fun rotate(degrees: Float)
     fun scale(x: Float, y: Float)

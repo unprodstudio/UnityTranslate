@@ -1,5 +1,6 @@
 package xyz.bluspring.unitytranslate.client.renderer.ui.font
 
+import org.joml.Matrix3x2f
 import org.joml.Matrix3x2fc
 import xyz.bluspring.unitytranslate.api.v2.client.gui.font.FontReference
 import xyz.bluspring.unitytranslate.api.v2.display.text.Style
@@ -23,7 +24,7 @@ class FreeTypeFontReference(stream: InputStream, val fontSize: Float) : FontRefe
     lateinit var awtRenderer: AWTRenderer
 
     override val lineHeight: Int
-        get() = Toolkit.getDefaultToolkit().getFontMetrics(this.font).height
+        get() = (Toolkit.getDefaultToolkit().getFontMetrics(this.font).height) / 2 + 2
 
     override fun width(text: TextComponent): Int {
         var width = 0
@@ -100,6 +101,9 @@ class FreeTypeFontReference(stream: InputStream, val fontSize: Float) : FontRefe
 
     fun draw(matrix: Matrix3x2fc, text: TextComponent, x: Float, y: Float, color: Int, dropShadow: Boolean) {
         val layer = this.awtRenderer.peek()
+        val matrix = Matrix3x2f(matrix)
+        matrix.mul(layer.matrix.invert(Matrix3x2f()))
+        matrix.translate(-layer.x.toFloat(), -layer.y.toFloat())
 
         val graphics = layer.image.createGraphics()
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)

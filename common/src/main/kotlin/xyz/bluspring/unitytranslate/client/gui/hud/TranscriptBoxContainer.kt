@@ -149,11 +149,11 @@ class TranscriptBoxContainer(var holder: TranscriptHolder, val config: Transcrip
         graphics.popMatrix()
 
         // Header
-        graphics.text(font, headerText, this.headerX, this.headerY, -1, this.config.header.hasShadow)
+        graphics.text(font, headerText, this.headerX, this.headerY + font.lineHeight, -1, this.config.header.hasShadow)
 
         graphics.enableScissor(0, font.lineHeight + 2, this.width.toInt(), this.height.toInt() - 7)
         graphics.pushMatrix()
-        graphics.translate(0f, this.height - 8f)
+        graphics.translate(0f, this.height - font.lineHeight - 2)
         val transcripts = synchronized(this.holder.transcripts) { this.holder.transcripts.toList() }
             .sortedBy { it.timeUpdated }
         var offset = 0f
@@ -171,7 +171,7 @@ class TranscriptBoxContainer(var holder: TranscriptHolder, val config: Transcrip
             for (sequence in font.split(text, this.width.toInt() - 4).reversed()) {
                 val hasShadow = this.config.shadowColor.alpha() <= 10
                 graphics.text(font, sequence, 0f, -offset, this.config.textColor.multiplyAlpha(fadeMultiplier), hasShadow) // TODO: shadow
-                offset += 10
+                offset += font.lineHeight
             }
 
             offset += 2
