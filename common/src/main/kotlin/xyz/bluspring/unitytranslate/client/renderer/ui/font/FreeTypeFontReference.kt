@@ -5,11 +5,8 @@ import org.joml.Matrix3x2fc
 import xyz.bluspring.unitytranslate.api.v2.client.gui.font.FontReference
 import xyz.bluspring.unitytranslate.api.v2.display.text.Style
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
-import xyz.bluspring.unitytranslate.api.v2.util.ARGBHelper
 import xyz.bluspring.unitytranslate.client.renderer.ui.AWTRenderer
-import java.awt.Color
 import java.awt.Font
-import java.awt.RenderingHints
 import java.awt.Toolkit
 import java.awt.font.FontRenderContext
 import java.awt.geom.AffineTransform
@@ -108,49 +105,20 @@ class FreeTypeFontReference(stream: InputStream, val fontSize: Float) : FontRefe
         val x = x * guiScale
         val y = y * guiScale
 
-        val graphics = layer.image.createGraphics()
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-        graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
-
-        graphics.transform(AffineTransform(matrix.m00(), matrix.m01(), matrix.m10(), matrix.m11(), matrix.m20(), matrix.m21()))
-
-        var currentX = x
-        text.visit({ component, style ->
-            val currentColor = ARGBHelper.multiply((style.color ?: -1), color)
-            val font = this.font.deriveFont(style.asAwtStyle, this.font.size2D * guiScale)
-            graphics.font = font
-
-            val bounds = font.getStringBounds(component, graphics.fontRenderContext)
-            graphics.color = Color(currentColor)
-
-            if (style.underlined == true)
-                graphics.fillRect(x.toInt(), (y + bounds.height).toInt(), bounds.width.toInt(), 1)
-
-            if (style.strikethrough == true)
-                graphics.fillRect(x.toInt(), (y + (bounds.height / 2)).toInt(), bounds.width.toInt(), 1)
-
-            if (dropShadow) {
-                graphics.color = Color(ARGBHelper.multiply(currentColor, ARGBHelper.colorFromFloat(1f, 0.2f, 0.2f, 0.2f)))
-                graphics.drawString(component, currentX + guiScale, y + guiScale)
-                graphics.color = Color(currentColor)
-            }
-
-            graphics.drawString(component, currentX, y)
-            currentX += bounds.width.toFloat()
-        })
-
-        graphics.dispose()
+        layer.addCall(this, matrix, text, color, x, y, dropShadow)
     }
 
-    private val Style.asAwtStyle: Int
-        get() {
-            var current = Font.PLAIN
-            if (this.bold == true)
-                current += Font.BOLD
+    companion object {
+        val Style.asAwtStyle: Int
+            get() {
+                var current = Font.PLAIN
+                if (this.bold == true)
+                    current += Font.BOLD
 
-            if (this.italic == true)
-                current += Font.ITALIC
+                if (this.italic == true)
+                    current += Font.ITALIC
 
-            return current
-        }
+                return current
+            }
+    }
 }
