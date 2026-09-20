@@ -62,5 +62,7 @@ class UnityTranslateConfigScreen : UTScreen() {
         graphics.fill(175f + 4, 6f, graphics.width.toFloat(), graphics.height.toFloat() - 24, 0.withAlpha(0.4f))
 
         super.submit(graphics, partialTick, mouseX, mouseY)
+
+        graphics.disableScissor()
     }
 }

@@ -58,7 +58,6 @@ class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : UIGra
     }
 
     override fun enableScissor(x: Int, y: Int, width: Int, height: Int) {
-        awtRenderer.flushLayer(this)
         this.scissorState.push(ScreenRectangle(x, y, width, height))
         awtRenderer.pushLayer(x, y, width, height, Matrix3x2f(this.matrixStack))
     }
@@ -72,7 +71,10 @@ class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : UIGra
         if (this.currentScissor != null)
             matrix.set(this.matrixStack)
 
-        awtRenderer.pushLayer(x, y, width, height, matrix)
+        if (awtRenderer.peek().matrix != matrix) {
+            awtRenderer.flushLayer(this)
+            awtRenderer.pushLayer(x, y, width, height, matrix)
+        }
     }
 
     override fun text(font: FontReference, text: TextComponent, x: Float, y: Float, color: Int, dropShadow: Boolean) {

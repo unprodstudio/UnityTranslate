@@ -144,7 +144,7 @@ class AWTRenderer {
         for (layer in this.renderedLayers) {
             graphics.pushMatrix()
             graphics.set(layer.matrix)
-            graphics.outline(layer.x.toFloat(), layer.y.toFloat(), (layer.x + layer.width).toFloat(), (layer.y + layer.height).toFloat(), 1f, -1)
+//            graphics.outline(layer.x.toFloat(), layer.y.toFloat(), (layer.x + layer.width).toFloat(), (layer.y + layer.height).toFloat(), 1f, -1)
             graphics.popMatrix()
         }
     }
