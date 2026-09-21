@@ -10,7 +10,11 @@ class TranscriberManager {
     private var lastTranscriptionTime = 0L
     private var isTranscribing = false
 
-    private val scope = CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) + CoroutineName("UnityTranslate Transcriber Manager")
+    private val scope = CoroutineScope(Executors.newSingleThreadExecutor({
+        Thread(it).apply {
+            isDaemon = true
+        }
+    }).asCoroutineDispatcher()) + CoroutineName("UnityTranslate Transcriber Manager")
 
     fun tick() {
         if (!this.isTranscribing && System.currentTimeMillis() - this.lastTranscriptionTime >= ClientConfig.transcriptionInterval) {

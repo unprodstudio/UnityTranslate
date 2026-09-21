@@ -221,7 +221,7 @@ object LibreTranslateTranslatorInstance : TranslatorInstance() {
         val process = processBuilder.start()
         lastPid = process.pid()
 
-        val timer = Timer()
+        val timer = Timer(true)
 
         process.onExit()
             .whenCompleteAsync { process, e ->

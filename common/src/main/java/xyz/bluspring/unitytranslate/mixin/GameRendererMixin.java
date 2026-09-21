@@ -6,8 +6,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import xyz.bluspring.unitytranslate.client.renderer.BatchedGuiRenderer;
 import xyz.bluspring.unitytranslate.client.renderer.UnityTranslateGui;
-import xyz.bluspring.unitytranslate.client.renderer.ui.AWTRenderer;
 import xyz.bluspring.unitytranslate.client.renderer.ui.BatchedUIGraphics;
+import xyz.bluspring.unitytranslate.client.renderer.ui.awt.AWTRenderer;
 
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.GameRenderer;

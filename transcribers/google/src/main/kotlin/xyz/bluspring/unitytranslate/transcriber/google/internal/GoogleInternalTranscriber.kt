@@ -55,7 +55,11 @@ object GoogleInternalTranscriber : SpeechTranscriber() {
     const val BYTES_PER_SAMPLE = AudioHelper.SAMPLE_SIZE
     const val CHANNELS = AudioHelper.CHANNELS
 
-    private val context = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+    private val context = Executors.newSingleThreadExecutor({
+        Thread(it).apply {
+            isDaemon = true
+        }
+    }).asCoroutineDispatcher()
     private val scope = CoroutineScope(context)
 
     private fun generateRequestKey(): String {
