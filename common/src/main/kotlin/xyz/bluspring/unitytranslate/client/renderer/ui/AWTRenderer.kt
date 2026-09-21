@@ -230,6 +230,11 @@ class AWTRenderer {
             val currentTime = System.currentTimeMillis()
             for ((size, reference) in this.imageLayers.entries().toList()) {
                 if (currentTime - reference.lastAccess >= MAX_LAST_ACCESS_TIME) {
+                    reference.texture.textureView.close()
+                    reference.texture.texture.close()
+                    reference.nativeImage.close()
+                    reference.image.flush()
+
                     this.imageLayers.remove(size, reference)
                 }
             }
