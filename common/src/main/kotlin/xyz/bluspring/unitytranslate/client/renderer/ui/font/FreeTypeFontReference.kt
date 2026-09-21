@@ -5,7 +5,7 @@ import org.joml.Matrix3x2fc
 import xyz.bluspring.unitytranslate.api.v2.client.gui.font.FontReference
 import xyz.bluspring.unitytranslate.api.v2.display.text.Style
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
-import xyz.bluspring.unitytranslate.client.renderer.ui.AWTRenderer
+import xyz.bluspring.unitytranslate.client.renderer.ui.awt.AWTRenderer
 import java.awt.Font
 import java.awt.Toolkit
 import java.awt.font.FontRenderContext
