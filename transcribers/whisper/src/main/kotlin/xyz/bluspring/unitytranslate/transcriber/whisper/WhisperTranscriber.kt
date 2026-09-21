@@ -42,7 +42,11 @@ object WhisperTranscriber : SpeechTranscriber() {
     private var scope = CoroutineScope(context)
     private val logger: Logger = LoggerFactory.getLogger(WhisperTranscriber::class.java)
 
-    private fun createContextThreads() = Executors.newFixedThreadPool(maxWhisperThreads).asCoroutineDispatcher() + CoroutineName("UnityTranslate Whisper Transcriber")
+    private fun createContextThreads() = Executors.newFixedThreadPool(maxWhisperThreads) {
+        Thread(it).apply {
+            isDaemon = true
+        }
+    }.asCoroutineDispatcher() + CoroutineName("UnityTranslate Whisper Transcriber")
 
     private val whisperInstances = Collections.synchronizedMap(mutableMapOf<Language, WhisperInstance>())
 
