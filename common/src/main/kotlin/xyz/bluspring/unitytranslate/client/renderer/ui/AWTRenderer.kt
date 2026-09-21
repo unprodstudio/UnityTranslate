@@ -1,7 +1,6 @@
 package xyz.bluspring.unitytranslate.client.renderer.ui
 
 import com.google.common.collect.HashMultimap
-import com.google.common.collect.MapMaker
 import com.mojang.blaze3d.GpuFormat
 import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.RenderSystem
@@ -158,7 +157,6 @@ class AWTRenderer {
                 internal set
 
             internal var lastLayerHash = 0
-            internal val hasher = hashers.computeIfAbsent(image.width * image.height * 4, ::FixedLengthHashCode)
 
             fun copyToImage(): NativeImage {
                 val pixels = (this.image.raster.dataBuffer as DataBufferInt).data
@@ -169,39 +167,12 @@ class AWTRenderer {
             }
         }
 
-        // By https://richardstartin.github.io/posts/explicit-intent-and-even-faster-hash-codes
-        internal class FixedLengthHashCode(maxLength: Int) {
-            private val coefficients = IntArray(maxLength + 1)
-
-            init {
-                coefficients[maxLength] = 1
-                var i = maxLength - 1
-                while (i >= 0) {
-                    coefficients[i] = 31 * coefficients[i + 1]
-                    --i
-                }
-            }
-
-            fun hashCode(value: IntArray): Int {
-                var result = coefficients[0]
-                var i = 0
-                while (i < value.size && i < coefficients.size - 1) {
-                    result += coefficients[i + 1] * value[i]
-                    ++i
-                }
-
-                return result
-            }
-        }
-
         private val guiScale: Float
             get() = ClientPlatformProxy.instance.guiScale.toFloat()
 
         private val imageLayers = HashMultimap.create<Size2i, LayerReference>()
         private val allocatedLayers = HashMultimap.create<Size2i, Int>()
         private val clearingLayers = HashMultimap.create<Size2i, LayerReference>()
-
-        private val hashers = MapMaker().weakValues().makeMap<Int, FixedLengthHashCode>()
 
         fun tryAllocateLayer(width: Int, height: Int): LayerReference {
             val size = Size2i(ceil(width * guiScale).toInt(), ceil(height * guiScale).toInt())
