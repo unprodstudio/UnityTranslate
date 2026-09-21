@@ -6,6 +6,7 @@ import xyz.bluspring.unitytranslate.api.v2.client.gui.font.FontReference
 import xyz.bluspring.unitytranslate.api.v2.display.text.Style
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
 import xyz.bluspring.unitytranslate.client.renderer.ui.awt.AWTRenderer
+import xyz.bluspring.unitytranslate.client.renderer.ui.awt.draw.TextDrawCall
 import java.awt.Font
 import java.awt.Toolkit
 import java.awt.font.FontRenderContext
@@ -105,7 +106,7 @@ class FreeTypeFontReference(stream: InputStream, val fontSize: Float) : FontRefe
         val x = x * guiScale
         val y = y * guiScale
 
-        layer.addCall(this, matrix, text, color, x, y, dropShadow)
+        layer.addDrawCall(TextDrawCall(this, matrix, text, color, x, y, dropShadow))
     }
 
     companion object {

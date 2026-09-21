@@ -1,11 +1,7 @@
 package xyz.bluspring.unitytranslate.client.renderer.ui.awt
 
 import org.joml.Matrix3x2f
-import org.joml.Matrix3x2fc
-import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
-import xyz.bluspring.unitytranslate.client.renderer.ui.awt.draw.DrawCall
-import xyz.bluspring.unitytranslate.client.renderer.ui.awt.draw.TextDrawCall
-import xyz.bluspring.unitytranslate.client.renderer.ui.font.FreeTypeFontReference
+import xyz.bluspring.unitytranslate.client.renderer.ui.awt.draw.AWTDrawCall
 import java.awt.Graphics2D
 
 data class Layer(
@@ -16,7 +12,7 @@ data class Layer(
     val hasImage: Boolean
         get() = this.drawCalls.isNotEmpty()
 
-    internal val drawCalls = mutableListOf<DrawCall>()
+    internal val drawCalls = mutableListOf<AWTDrawCall>()
 
     val reference: LayerReference by lazy {
         AWTRenderer.tryAllocateLayer(width, height)
@@ -33,8 +29,8 @@ data class Layer(
             return hash
         }
 
-    fun addCall(font: FreeTypeFontReference, matrix: Matrix3x2fc, text: TextComponent, color: Int, x: Float, y: Float, dropShadow: Boolean) {
-        this.drawCalls.add(TextDrawCall(font, matrix, text, color, x, y, dropShadow))
+    fun addDrawCall(call: AWTDrawCall) {
+        this.drawCalls.add(call)
     }
 
     private var graphics: Graphics2D? = null

@@ -11,11 +11,10 @@ import net.minecraft.util.Mth
 import org.joml.Matrix3x2f
 import org.joml.Matrix3x2fc
 import xyz.bluspring.unitytranslate.api.v2.client.gui.TextureReference
-import xyz.bluspring.unitytranslate.api.v2.client.gui.UIGraphics
 import xyz.bluspring.unitytranslate.api.v2.client.gui.font.FontReference
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
 import xyz.bluspring.unitytranslate.client.ClientPlatformProxy
-import xyz.bluspring.unitytranslate.client.renderer.ui.awt.AWTRenderer
+import xyz.bluspring.unitytranslate.client.renderer.ui.awt.AWTBackedUIGraphics
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.FreeTypeFontReference
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.MinecraftFontReference
 import xyz.bluspring.unitytranslate.client.renderer.ui.minecraft.ColoredBlitRenderState
@@ -26,14 +25,12 @@ import xyz.bluspring.unitytranslate.client.renderer.ui.texture.AbstractTextureRe
 import xyz.bluspring.unitytranslate.mixin.accessor.GuiGraphicsExtractorAccessor
 import xyz.bluspring.unitytranslate.util.PlatformConversion.asMinecraft
 
-class MinecraftUIGraphics(private val graphics: GuiGraphicsExtractor) : UIGraphics {
+class MinecraftUIGraphics(private val graphics: GuiGraphicsExtractor) : AWTBackedUIGraphics() {
     private val GuiGraphicsExtractor.guiRenderState: GuiRenderState
         get() = (this as GuiGraphicsExtractorAccessor).`unitytranslate$getGuiRenderState`()
 
     private val GuiGraphicsExtractor.scissor: ScreenRectangle?
         get() = (this as GuiGraphicsExtractorAccessor).`unityTranslate$getScissorStack`().peek()
-
-    val awtRenderer = AWTRenderer()
 
     private val visibleArea: ScreenRectangle
         get() {
@@ -174,6 +171,10 @@ class MinecraftUIGraphics(private val graphics: GuiGraphicsExtractor) : UIGraphi
 
     override fun set(matrix: Matrix3x2fc) {
         this.graphics.pose().set(matrix)
+    }
+
+    override fun peekMatrix(): Matrix3x2fc {
+        return this.graphics.pose()
     }
 
     override fun translate(x: Float, y: Float) {

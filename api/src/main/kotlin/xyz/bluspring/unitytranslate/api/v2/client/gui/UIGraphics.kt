@@ -28,6 +28,12 @@ interface UIGraphics {
 
     fun fill(x1: Float, y1: Float, x2: Float, y2: Float, colorTopLeft: Int, colorTopRight: Int, colorBottomLeft: Int, colorBottomRight: Int)
 
+    fun roundedFill(x1: Float, y1: Float, x2: Float, y2: Float, radius: Float, colorFrom: Int, colorTo: Int = colorFrom)
+        = roundedFill(x1, y1, x2, y2, radius, colorFrom, colorFrom, colorTo, colorTo)
+    fun roundedFill(x1: Float, y1: Float, x2: Float, y2: Float, radius: Float, colorTopLeft: Int, colorTopRight: Int, colorBottomLeft: Int, colorBottomRight: Int)
+        = roundedFill(x1, y1, x2, y2, radius, ColorMatrix(colorTopLeft, colorTopRight, colorBottomLeft, colorBottomRight))
+    fun roundedFill(x1: Float, y1: Float, x2: Float, y2: Float, radius: Float, matrix: ColorMatrix)
+
     fun meshFill(x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float, x4: Float, y4: Float, color1: Int, color2: Int = color1, color3: Int = color1, color4: Int = color1)
     fun meshFill(x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float, x4: Float, y4: Float, matrix: ColorMatrix)
         = meshFill(x1, y1, x2, y2, x3, y3, x4, y4, matrix.topLeft, matrix.topRight, matrix.bottomLeft, matrix.bottomRight)
@@ -69,6 +75,12 @@ interface UIGraphics {
         this.fill(x1, y1 + thickness, x1 + thickness, y2 - thickness, colorOuterLowerTopLeft, colorInnerLowerTopLeft, colorOuterUpperBottomLeft, colorInnerUpperBottomLeft) // left
         this.fill(x2 - thickness, y1 + thickness, x2, y2 - thickness, colorInnerLowerTopRight, colorOuterLowerTopRight, colorInnerUpperBottomRight, colorOuterUpperBottomRight) // right
     }
+
+    fun roundedOutline(x1: Float, y1: Float, x2: Float, y2: Float, radius: Float, thickness: Float = 1f, colorFrom: Int, colorTo: Int = colorFrom)
+        = roundedOutline(x1, y1, x2, y2, radius, thickness, colorFrom, colorFrom, colorTo, colorTo)
+    fun roundedOutline(x1: Float, y1: Float, x2: Float, y2: Float, radius: Float, thickness: Float = 1f, colorTopLeft: Int, colorTopRight: Int, colorBottomLeft: Int, colorBottomRight: Int)
+        = roundedOutline(x1, y1, x2, y2, radius, thickness, ColorMatrix(colorTopLeft, colorTopRight, colorBottomLeft, colorBottomRight))
+    fun roundedOutline(x1: Float, y1: Float, x2: Float, y2: Float, radius: Float, thickness: Float = 1f, matrix: ColorMatrix)
 
     fun meshBlit(x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float, x4: Float, y4: Float,
                           u1: Float, v1: Float, u2: Float, v2: Float, u3: Float, v3: Float, u4: Float, v4: Float, texture: TextureReference)

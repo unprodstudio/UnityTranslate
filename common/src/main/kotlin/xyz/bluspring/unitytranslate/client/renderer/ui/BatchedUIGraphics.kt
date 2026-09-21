@@ -10,26 +10,23 @@ import org.joml.Matrix3x2fStack
 import org.joml.Matrix3x2fc
 import org.joml.Matrix4f
 import xyz.bluspring.unitytranslate.api.v2.client.gui.TextureReference
-import xyz.bluspring.unitytranslate.api.v2.client.gui.UIGraphics
 import xyz.bluspring.unitytranslate.api.v2.client.gui.font.FontReference
 import xyz.bluspring.unitytranslate.api.v2.client.util.ScreenRectangle
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
 import xyz.bluspring.unitytranslate.client.ClientPlatformProxy
 import xyz.bluspring.unitytranslate.client.renderer.BatchedGuiRenderer
-import xyz.bluspring.unitytranslate.client.renderer.ui.awt.AWTRenderer
+import xyz.bluspring.unitytranslate.client.renderer.ui.awt.AWTBackedUIGraphics
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.FreeTypeFontReference
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.MinecraftFontReference
 import xyz.bluspring.unitytranslate.client.renderer.ui.texture.AbstractTextureReference
 import xyz.bluspring.unitytranslate.util.PlatformConversion.asMinecraft
 import java.util.*
 
-class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : UIGraphics {
+class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : AWTBackedUIGraphics() {
     val matrixStack = Matrix3x2fStack()
     private val scissorState = Stack<ScreenRectangle>()
     private val currentScissor: ScreenRectangle?
         get() = if (this.scissorState.isEmpty()) null else this.scissorState.peek()
-
-    val awtRenderer = AWTRenderer()
 
     private val visibleArea: ScreenRectangle
         get() {
@@ -197,6 +194,10 @@ class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : UIGra
 
     override fun set(matrix: Matrix3x2fc) {
         this.matrixStack.set(matrix)
+    }
+
+    override fun peekMatrix(): Matrix3x2fc {
+        return this.matrixStack
     }
 
     override fun translate(x: Float, y: Float) {
