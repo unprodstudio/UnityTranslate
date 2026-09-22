@@ -16,13 +16,17 @@ import net.minecraft.util.profiling.Profiler
 import net.minecraft.util.thread.ReentrantBlockableEventLoop
 import org.lwjgl.glfw.GLFW
 import xyz.bluspring.unitytranslate.UnityTranslate
+import xyz.bluspring.unitytranslate.api.v2.client.gui.screen.UTScreen
 import xyz.bluspring.unitytranslate.client.renderer.BatchedGuiRenderer
+import xyz.bluspring.unitytranslate.client.renderer.UnityTranslateGui
+import xyz.bluspring.unitytranslate.client.renderer.ui.BatchedUIGraphics
 import xyz.bluspring.unitytranslate.shared.HandledException
 import xyz.bluspring.unitytranslate.shared.Metadata
 import xyz.bluspring.unitytranslate.standalone.input.Keyboard
 import xyz.bluspring.unitytranslate.standalone.input.Mouse
 import xyz.bluspring.unitytranslate.standalone.resources.ShaderManager
 import xyz.bluspring.unitytranslate.standalone.resources.StandalonePackResources
+import xyz.bluspring.unitytranslate.standalone.ui.StandaloneScreen
 import java.util.*
 
 object UnityTranslateStandalone : ReentrantBlockableEventLoop<Runnable>("UnityTranslate", true), WindowEventHandler {
@@ -35,10 +39,12 @@ object UnityTranslateStandalone : ReentrantBlockableEventLoop<Runnable>("UnityTr
 
     var frameTimeNs: Long = 0
 
+    var screen: UTScreen = StandaloneScreen()
+
     private var running = true
 
     init {
-        Util.timeSource = RenderSystem.initBackendSystem()
+        Util.setTimeSource(RenderSystem.initBackendSystem())
         Thread.currentThread().name = "UnityTranslate Render Thread"
         RenderSystem.initRenderThread()
         Util.startTimerHackThread()
@@ -55,11 +61,11 @@ object UnityTranslateStandalone : ReentrantBlockableEventLoop<Runnable>("UnityTr
 //                GLFW.glfwWindowHint(GLFW.GLFW_DECORATED, GLFW.GLFW_FALSE) // Borderless window
 //                GLFW.glfwWindowHint(GLFW.GLFW_MOUSE_PASSTHROUGH, GLFW.GLFW_TRUE) // Allow clicking the mouse through the window
 
-                window = Window(this, DisplayData(843, 600, OptionalInt.empty(), OptionalInt.empty(), false), null, "UnityTranslate", backend)
+                window = Window(this, DisplayData(843, 600, OptionalInt.empty(), OptionalInt.empty(), false), null, false, "UnityTranslate", MonitorManager(), backend)
                 device = window.backend().createDevice(window.handle(),
                     ShaderManager::getShader,
                     GpuDebugOptions(0, false, false, false)
-                )
+                ) {}
                 GLFW.glfwShowWindow(window.handle())
 
                 val deviceInfo = device.deviceInfo
@@ -153,7 +159,7 @@ object UnityTranslateStandalone : ReentrantBlockableEventLoop<Runnable>("UnityTr
 
     private fun renderFrame() {
         if (this.window.shouldClose()) {
-            this.stop
+            this.stop()
         }
 
         val renderStartTimer = Util.getNanos()
@@ -193,6 +199,14 @@ object UnityTranslateStandalone : ReentrantBlockableEventLoop<Runnable>("UnityTr
         this.deltaTracker.advanceRealTime(Util.getMillis())
 
         // Rendering
+        profiler.popPush("submit")
+        val graphics = BatchedUIGraphics(BatchedGuiRenderer.DrawLayer.SCREEN)
+        val partialTick = this.deltaTracker.getGameTimeDeltaPartialTick(true)
+        UnityTranslateGui.submit(graphics, partialTick, Mouse.x, Mouse.y)
+        UnityTranslateGui.submitLate(graphics, partialTick)
+        this.screen.submit(graphics, partialTick, Mouse.x.toInt(), Mouse.y.toInt())
+        graphics.flushLastLayer()
+
         profiler.popPush("render")
         BatchedGuiRenderer.render()
 
@@ -229,7 +243,7 @@ object UnityTranslateStandalone : ReentrantBlockableEventLoop<Runnable>("UnityTr
         this.windowSurfaceNeedsReconfiguring = true
     }
 
-    fun stop {
+    fun stop() {
         this.running = false
         UnityTranslate.logger.info("Stopping!")
     }

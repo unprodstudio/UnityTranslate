@@ -3,7 +3,6 @@ package xyz.bluspring.unitytranslate.standalone.input
 import com.mojang.blaze3d.Blaze3D
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.input.MouseButtonInfo
-import xyz.bluspring.unitytranslate.client.renderer.UnityTranslateGui
 import xyz.bluspring.unitytranslate.standalone.UnityTranslateStandalone
 
 object Mouse {
@@ -37,16 +36,16 @@ object Mouse {
             }
 
             if (pressed) {
-                UnityTranslateGui.mouseClick(this.x, this.y, info.button)
+                UnityTranslateStandalone.screen.mouseClicked(this.x, this.y, info.button)
             } else {
-                UnityTranslateGui.mouseReleased()
+                UnityTranslateStandalone.screen.mouseReleased(this.x, this.y, info.button)
             }
         }
     }
 
     fun onScroll(handle: Long, scrollX: Double, scrollY: Double) {
         if (handle == UnityTranslateStandalone.window.handle()) {
-            UnityTranslateGui.mouseScrolled(this.x, this.y, scrollX, scrollY)
+            UnityTranslateStandalone.screen.mouseScrolled(this.x, this.y, scrollX, scrollY)
         }
     }
 
