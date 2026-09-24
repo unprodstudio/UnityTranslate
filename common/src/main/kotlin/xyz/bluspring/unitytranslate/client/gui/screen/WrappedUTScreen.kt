@@ -9,6 +9,7 @@ import net.minecraft.client.input.MouseButtonEvent
 import net.minecraft.network.chat.Component
 import xyz.bluspring.unitytranslate.api.v2.client.gui.screen.UTScreen
 import xyz.bluspring.unitytranslate.client.renderer.ui.MinecraftUIGraphics
+import xyz.bluspring.unitytranslate.minecraft.scancode
 
 class WrappedUTScreen(val actualScreen: UTScreen, private val parent: Screen? = null) : Screen(Component.empty()) {
     override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {

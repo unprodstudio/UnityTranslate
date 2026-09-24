@@ -59,5 +59,7 @@ dependencies {
     api(libs.plasmo.api.server)
     api(libs.plasmo.api.client)
 
-    api("maven.modrinth:talk-balloons:${libs.versions.talk.balloons.get()}+${mcVersion}-neoforge")
+    api("xyz.bluspring.modernnetworking:modernnetworking-api:${libs.versions.modernnetworking.get()}")
+    api("xyz.bluspring.modernnetworking:modernnetworking-common:${libs.versions.modernnetworking.get()}+${property("modernnetworking_mc")}")
+    api("maven.modrinth:talk-balloons:${libs.versions.talk.balloons.get()}+${mcVersion}-${if (stonecutter.eval(mcVersion, ">=26.3")) "fabric" else "neoforge"}")
 }

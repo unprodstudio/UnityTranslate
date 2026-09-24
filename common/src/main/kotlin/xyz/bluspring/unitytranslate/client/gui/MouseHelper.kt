@@ -1,16 +1,30 @@
 package xyz.bluspring.unitytranslate.client.gui
 
-import org.lwjgl.glfw.GLFW
+//? if < 26.3 {
+/*import org.lwjgl.glfw.GLFW
 import xyz.bluspring.unitytranslate.client.ClientPlatformProxy
+*///? } else {
+import org.lwjgl.sdl.SDLMouse
+//? }
 
 object MouseHelper {
-    private val arrowCursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_ARROW_CURSOR)
+    //? if >= 26.3 {
+    private val arrowCursor = SDLMouse.SDL_CreateSystemCursor(SDLMouse.SDL_SYSTEM_CURSOR_DEFAULT)
+    private val pointerCursor = SDLMouse.SDL_CreateSystemCursor(SDLMouse.SDL_SYSTEM_CURSOR_POINTER)
+    private val horizontalResizeCursor = SDLMouse.SDL_CreateSystemCursor(SDLMouse.SDL_SYSTEM_CURSOR_EW_RESIZE)
+    private val verticalResizeCursor = SDLMouse.SDL_CreateSystemCursor(SDLMouse.SDL_SYSTEM_CURSOR_NS_RESIZE)
+    private val topLeftToBottomRightResizeCursor = SDLMouse.SDL_CreateSystemCursor(SDLMouse.SDL_SYSTEM_CURSOR_NWSE_RESIZE)
+    private val topRightToBottomLeftResizeCursor = SDLMouse.SDL_CreateSystemCursor(SDLMouse.SDL_SYSTEM_CURSOR_NESW_RESIZE)
+    private val omniResizeCursor = SDLMouse.SDL_CreateSystemCursor(SDLMouse.SDL_SYSTEM_CURSOR_MOVE)
+    //? } else {
+    /*private val arrowCursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_ARROW_CURSOR)
     private val pointerCursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_HAND_CURSOR)
     private val horizontalResizeCursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_HRESIZE_CURSOR)
     private val verticalResizeCursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_VRESIZE_CURSOR)
     private val topLeftToBottomRightResizeCursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_RESIZE_NWSE_CURSOR)
     private val topRightToBottomLeftResizeCursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_RESIZE_NESW_CURSOR)
     private val omniResizeCursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_RESIZE_ALL_CURSOR)
+    *///? }
 
     private var currentCursor = this.arrowCursor
     private var queuedCursor: Long? = null
@@ -37,19 +51,31 @@ object MouseHelper {
         }
 
         if (queued != null) {
-            GLFW.glfwSetCursor(ClientPlatformProxy.instance.windowHandle, queued)
+            //? if >= 26.3 {
+            SDLMouse.SDL_SetCursor(queued)
+            //? } else {
+            /*GLFW.glfwSetCursor(ClientPlatformProxy.instance.windowHandle, queued)
+            *///? }
             this.currentCursor = queued
             this.queuedCursor = null
         }
     }
 
     fun close() {
-        GLFW.glfwDestroyCursor(this.arrowCursor)
-        GLFW.glfwDestroyCursor(this.pointerCursor)
-        GLFW.glfwDestroyCursor(this.horizontalResizeCursor)
-        GLFW.glfwDestroyCursor(this.verticalResizeCursor)
-        GLFW.glfwDestroyCursor(this.topLeftToBottomRightResizeCursor)
-        GLFW.glfwDestroyCursor(this.topRightToBottomLeftResizeCursor)
-        GLFW.glfwDestroyCursor(this.omniResizeCursor)
+        destroyCursor(this.arrowCursor)
+        destroyCursor(this.pointerCursor)
+        destroyCursor(this.horizontalResizeCursor)
+        destroyCursor(this.verticalResizeCursor)
+        destroyCursor(this.topLeftToBottomRightResizeCursor)
+        destroyCursor(this.topRightToBottomLeftResizeCursor)
+        destroyCursor(this.omniResizeCursor)
+    }
+
+    private fun destroyCursor(ptr: Long) {
+        //? if >= 26.3 {
+        SDLMouse.SDL_DestroyCursor(ptr)
+        //? } else {
+        /*GLFW.glfwDestroyCursor(ptr)
+        *///? }
     }
 }

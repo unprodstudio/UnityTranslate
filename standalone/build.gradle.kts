@@ -43,7 +43,7 @@ dependencies {
 
     minecraft("com.mojang:minecraft:${libs.versions.minecraft.standalone.get()}")
 
-    shadedDep(implementation(project(":common:26.2")) {
+    shadedDep(implementation(project(":common:26.3")) {
         isTransitive = false
     })
 

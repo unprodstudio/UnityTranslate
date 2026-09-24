@@ -1,12 +1,12 @@
 package xyz.bluspring.unitytranslate.client.renderer.ui.texture
 
-import com.mojang.blaze3d.textures.GpuTextureView
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.texture.TextureAtlas
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.resources.Identifier
+import xyz.bluspring.unitytranslate.client.renderer.GpuTextureView
 
 data class MinecraftSpriteTextureReference(val atlasId: Identifier, val spriteId: Identifier) : AbstractTextureReference("minecraft_sprite") {
     val atlas: TextureAtlas

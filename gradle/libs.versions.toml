@@ -1,19 +1,19 @@
 [versions]
 # https://fabricmc.net/develop/
-fabric-loom = "1.17.+"
+fabric-loom = "1.18.+"
 # https://projects.neoforged.net/neoforged/moddevgradle
-moddevgradle = "2.0.141"
+moddevgradle = "2.0.147"
 # https://codeberg.org/stonecutter/fletching-table/src/branch/main/build.gradle.kts#L18
 fletching-table = "0.1.0-alpha.22"
 # https://stonecutter.kikugie.dev/
 stonecutter = "0.9.+"
 # https://github.com/GradleUp/shadow/releases
-shadow = "9.4.0"
+shadow = "9.6.1"
 # https://github.com/modmuss50/mod-publish-plugin/blob/main/build.gradle.kts#L13
-mod-publish = "1.1.0"
+mod-publish = "2.2.1"
 
-minecraft-standalone = "26.2" # The MC version for the standalone JAR
-datafixerupper = "9.0.19" # When updating MC for standalone, make sure to bump this too!
+minecraft-standalone = "26.3" # The MC version for the standalone JAR
+datafixerupper = "10.0.21" # When updating MC for standalone, make sure to bump this too!
 
 # https://github.com/FabricMC/Mixin/blob/main/gradle.properties#L7
 mixin = "0.8.7"
@@ -21,15 +21,15 @@ mixin = "0.8.7"
 mixinextras = "0.5.4"
 
 # https://fabricmc.net/develop/
-fabric-loader = "0.19.3"
+fabric-loader = "0.19.5"
 # https://modrinth.com/mod/fabric-language-kotlin/versions
-fabric-kotlin = "1.13.12+kotlin.2.4.0"
+fabric-kotlin = "1.14.1+kotlin.2.4.20"
 
 # https://modrinth.com/mod/kotlin-lang-forge/versions
-kotlinlangforge = "2.12.1-k2.4.0"
+kotlinlangforge = "2.14.1-k2.4.20"
 
 # https://kotlinlang.org/docs/releases.html
-kotlin = "2.4.0"
+kotlin = "2.4.20"
 kotlinx-coroutines = "1.11.0"
 kotlinx-serialization = "1.11.0"
 
@@ -46,13 +46,13 @@ gson = "2.14.0"
 unitytranslatelib = "1.0.0"
 
 # https://modrinth.com/mod/talk-balloons/versions
-talk-balloons = "1.5.3"
+talk-balloons = "1.6.3"
+
+# https://modrinth.com/mod/modernnetworking/versions
+modernnetworking = "2.0.1"
 
 # https://github.com/BluSpring/SunsetConfig/blob/main/build.gradle.kts#L23
 sunset = "1.2.0"
-
-# https://mvn.devos.one/#/snapshots/dev/cadindie/whisper4j
-whisper4j = "1.0.0"
 
 # https://maven.maxhenkel.de/#/releases/de/maxhenkel/voicechat/voicechat-api
 voicechat-api = "2.6.13"
@@ -107,6 +107,7 @@ gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 unitytranslatelib = { module = "xyz.bluspring.unitytranslate:unitytranslate-library", version.ref = "unitytranslatelib" }
 whispercpp = { module = "io.github.ggerganov:whispercpp", version.ref = "whispercpp" }
+modernnetworking-api = { module = "xyz.bluspring.modernnetworking:modernnetworking-api", version.ref = "modernnetworking" }
 
 voicechat-api = { module = "de.maxhenkel.voicechat:voicechat-api", version.ref = "voicechat-api" }
 plasmo-api-server = { module = "su.plo.voice.api:server", version.ref = "plasmo-api" }

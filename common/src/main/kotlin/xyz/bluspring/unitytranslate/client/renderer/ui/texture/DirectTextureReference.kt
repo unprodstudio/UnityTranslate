@@ -1,8 +1,8 @@
 package xyz.bluspring.unitytranslate.client.renderer.ui.texture
 
 import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.textures.GpuTexture
-import com.mojang.blaze3d.textures.GpuTextureView
+import xyz.bluspring.unitytranslate.client.renderer.GpuTexture
+import xyz.bluspring.unitytranslate.client.renderer.GpuTextureView
 
 data class DirectTextureReference(
     val texture: GpuTexture,

@@ -1,10 +1,10 @@
 package xyz.bluspring.unitytranslate.client.renderer.ui.texture
 
-import com.mojang.blaze3d.textures.GpuTextureView
 import com.mojang.serialization.Codec
 import net.minecraft.resources.Identifier
 import xyz.bluspring.unitytranslate.PlatformProxy
 import xyz.bluspring.unitytranslate.api.v2.client.gui.TextureReference
+import xyz.bluspring.unitytranslate.client.renderer.GpuTextureView
 import java.nio.file.Path
 
 abstract class AbstractTextureReference(val type: String) : TextureReference {

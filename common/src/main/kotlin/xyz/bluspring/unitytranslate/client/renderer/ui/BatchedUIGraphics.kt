@@ -23,7 +23,7 @@ import xyz.bluspring.unitytranslate.util.PlatformConversion.asMinecraft
 import java.util.*
 
 class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : AWTBackedUIGraphics() {
-    val matrixStack = Matrix3x2fStack()
+    val matrixStack = Matrix3x2fStack(32)
     private val scissorState = Stack<ScreenRectangle>()
     private val currentScissor: ScreenRectangle?
         get() = if (this.scissorState.isEmpty()) null else this.scissorState.peek()

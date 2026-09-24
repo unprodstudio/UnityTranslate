@@ -1,13 +1,13 @@
 package xyz.bluspring.unitytranslate.client.renderer.ui.awt
 
 import com.google.common.collect.HashMultimap
-import com.mojang.blaze3d.GpuFormat
 import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.textures.GpuTexture
 import org.joml.Matrix3x2f
 import xyz.bluspring.unitytranslate.api.v2.client.gui.UIGraphics
 import xyz.bluspring.unitytranslate.client.ClientPlatformProxy
+import xyz.bluspring.unitytranslate.client.renderer.GpuFormat
+import xyz.bluspring.unitytranslate.client.renderer.GpuTexture
 import xyz.bluspring.unitytranslate.client.renderer.ui.texture.DirectTextureReference
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferInt

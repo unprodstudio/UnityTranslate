@@ -1,15 +1,15 @@
 package xyz.bluspring.unitytranslate.client.renderer.ui.texture
 
-import com.mojang.blaze3d.GpuFormat
 import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.textures.GpuTexture
-import com.mojang.blaze3d.textures.GpuTextureView
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.MapCodec
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite
 import xyz.bluspring.unitytranslate.UnityTranslate
+import xyz.bluspring.unitytranslate.client.renderer.GpuFormat
+import xyz.bluspring.unitytranslate.client.renderer.GpuTexture
+import xyz.bluspring.unitytranslate.client.renderer.GpuTextureView
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption

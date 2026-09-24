@@ -13,7 +13,7 @@ plugins {
     id("multiplatform")
 }
 
-stonecutter active "26.2"
+stonecutter active "26.3"
 
 allprojects {
     apply(plugin = "idea")
@@ -35,7 +35,7 @@ allprojects {
         mavenProviding("https://repo.nyon.dev/releases", "dev.nyon")
         mavenProviding("https://maven.fabricmc.net", "net.fabricmc")
         mavenProviding("https://libraries.minecraft.net", "com.mojang")
-        mavenProviding("https://mvn.devos.one/releases", "xyz.bluspring.sunset", "io.nayuki")
+        mavenProviding("https://mvn.devos.one/releases", "xyz.bluspring.sunset", "xyz.bluspring.modernnetworking", "io.nayuki")
         mavenProviding("https://maven.maxhenkel.de/releases", "de.maxhenkel")
         mavenProviding("https://api.modrinth.com/maven", "maven.modrinth")
         mavenProviding("https://www.cursemaven.com", "curse.maven")

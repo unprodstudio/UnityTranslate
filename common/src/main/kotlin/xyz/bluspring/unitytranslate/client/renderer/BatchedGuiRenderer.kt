@@ -1,12 +1,7 @@
 package xyz.bluspring.unitytranslate.client.renderer
 
 import com.mojang.blaze3d.ProjectionType
-import com.mojang.blaze3d.buffers.GpuBuffer
-import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.textures.FilterMode
-import com.mojang.blaze3d.textures.GpuSampler
-import com.mojang.blaze3d.textures.GpuTextureView
 import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.ByteBufferBuilder
 import com.mojang.blaze3d.vertex.VertexConsumer

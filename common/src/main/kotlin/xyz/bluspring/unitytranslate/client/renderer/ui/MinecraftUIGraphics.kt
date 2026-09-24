@@ -1,7 +1,6 @@
 package xyz.bluspring.unitytranslate.client.renderer.ui
 
 import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.textures.FilterMode
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.gui.render.TextureSetup
@@ -14,6 +13,7 @@ import xyz.bluspring.unitytranslate.api.v2.client.gui.TextureReference
 import xyz.bluspring.unitytranslate.api.v2.client.gui.font.FontReference
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
 import xyz.bluspring.unitytranslate.client.ClientPlatformProxy
+import xyz.bluspring.unitytranslate.client.renderer.FilterMode
 import xyz.bluspring.unitytranslate.client.renderer.ui.awt.AWTBackedUIGraphics
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.FreeTypeFontReference
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.MinecraftFontReference

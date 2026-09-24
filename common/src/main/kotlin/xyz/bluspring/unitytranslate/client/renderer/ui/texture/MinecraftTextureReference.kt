@@ -1,10 +1,10 @@
 package xyz.bluspring.unitytranslate.client.renderer.ui.texture
 
-import com.mojang.blaze3d.textures.GpuTextureView
 import com.mojang.serialization.MapCodec
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.texture.AbstractTexture
 import net.minecraft.resources.Identifier
+import xyz.bluspring.unitytranslate.client.renderer.GpuTextureView
 
 data class MinecraftTextureReference(val id: Identifier) : AbstractTextureReference("minecraft_texture") {
     val texture: AbstractTexture

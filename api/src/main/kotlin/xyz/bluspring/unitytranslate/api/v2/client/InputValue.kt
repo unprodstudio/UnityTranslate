@@ -63,7 +63,6 @@ enum class InputValue {
     KEY_F22,
     KEY_F23,
     KEY_F24,
-    KEY_F25,
     KEY_NUMLOCK,
     KEY_NUMPAD0,
     KEY_NUMPAD1,
