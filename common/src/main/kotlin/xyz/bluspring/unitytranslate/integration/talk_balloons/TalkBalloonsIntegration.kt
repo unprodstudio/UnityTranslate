@@ -21,38 +21,42 @@ object TalkBalloonsIntegration {
                     return@register
 
                 if (data.sender is PlayerUser) {
-                    val messages = TalkBalloonsApi.INSTANCE.getBalloonMessages(Minecraft.getInstance().player!!)
-                    val player = Minecraft.getInstance().level?.getPlayerByUUID((data.sender as PlayerUser).uuid)
-                        ?: return@register
+                    Minecraft.getInstance().execute {
+                        val messages = TalkBalloonsApi.INSTANCE.getBalloonMessages(Minecraft.getInstance().player!!)
+                        val player = Minecraft.getInstance().level?.getPlayerByUUID((data.sender as PlayerUser).uuid)
+                            ?: return@execute
 
-                    if (existingMessages.contains(data.id)) {
-                        val message = existingMessages[data.id]!!
-                        TalkBalloonsApi.INSTANCE.getBalloonMessages(player).remove(message)
-                        existingMessages.remove(data.id)
-                    }
-
-                    val message = Component.literal(data.message)
-                    synchronized(messages) {
-                        TalkBalloonsApi.INSTANCE.createBalloonMessage(player, message, TalkBalloonsApi.INSTANCE.defaultDuration * 20)
-                    }
-                    existingMessages[data.id] = message
-                } else if (data.sender is MinecraftLocalTranscriptUser) {
-                    val messages = TalkBalloonsApi.INSTANCE.getBalloonMessages(Minecraft.getInstance().player!!)
-
-                    if (existingMessages.contains(data.id)) {
-                        val message = existingMessages[data.id]!!
-                        synchronized(messages) {
-                            messages.remove(message)
+                        if (existingMessages.contains(data.id)) {
+                            val message = existingMessages[data.id]!!
+                            TalkBalloonsApi.INSTANCE.getBalloonMessages(player).remove(message)
+                            existingMessages.remove(data.id)
                         }
 
-                        existingMessages.remove(data.id)
+                        val message = Component.literal(data.message)
+                        synchronized(messages) {
+                            TalkBalloonsApi.INSTANCE.createBalloonMessage(player, message, TalkBalloonsApi.INSTANCE.defaultDuration * 20)
+                        }
+                        existingMessages[data.id] = message
                     }
+                } else if (data.sender is MinecraftLocalTranscriptUser) {
+                    Minecraft.getInstance().execute {
+                        val messages = TalkBalloonsApi.INSTANCE.getBalloonMessages(Minecraft.getInstance().player!!)
 
-                    val message = Component.literal(data.message)
-                    synchronized(messages) {
-                        TalkBalloonsApi.INSTANCE.createBalloonMessage(Minecraft.getInstance().player!!, message, TalkBalloonsApi.INSTANCE.defaultDuration * 20)
+                        if (existingMessages.contains(data.id)) {
+                            val message = existingMessages[data.id]!!
+                            synchronized(messages) {
+                                messages.remove(message)
+                            }
+
+                            existingMessages.remove(data.id)
+                        }
+
+                        val message = Component.literal(data.message)
+                        synchronized(messages) {
+                            TalkBalloonsApi.INSTANCE.createBalloonMessage(Minecraft.getInstance().player!!, message, TalkBalloonsApi.INSTANCE.defaultDuration * 20)
+                        }
+                        existingMessages[data.id] = message
                     }
-                    existingMessages[data.id] = message
                 }
             }
         }
