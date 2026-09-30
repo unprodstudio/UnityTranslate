@@ -46,7 +46,7 @@ class StandalonePlatformProxy : Blaze3DClientPlatformProxy(), PlatformProxy {
         get() = UnityTranslateStandalone.window.screenWidth
     override val viewportHeight: Int
         get() = UnityTranslateStandalone.window.screenHeight
-    override val defaultFont: FontReference = FontReference.freeType(UnityTranslate::class.java.getResourceAsStream("/assets/unitytranslate/font/tiktok_sans.ttf")!!, 10f)
+    override val defaultFont: FontReference = FontReference.smooth(UnityTranslate::class.java.getResourceAsStream("/assets/unitytranslate/font/tiktok_sans.ttf")!!, 10f)
     override val guiScale: Double
         get() = UnityTranslateStandalone.window.guiScale.toDouble()
 

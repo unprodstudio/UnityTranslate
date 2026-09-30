@@ -3,8 +3,8 @@ package xyz.bluspring.unitytranslate.api.v2.client.gui.font
 import net.minecraft.client.gui.Font
 import org.jetbrains.annotations.ApiStatus
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
-import xyz.bluspring.unitytranslate.client.renderer.ui.font.FreeTypeFontReference
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.MinecraftFontReference
+import xyz.bluspring.unitytranslate.client.renderer.ui.font.SmoothFontReference
 import java.io.InputStream
 
 /**
@@ -23,6 +23,6 @@ interface FontReference {
         fun minecraft(font: Font): FontReference = MinecraftFontReference(font) as FontReference
 
         @JvmStatic
-        fun freeType(fontStream: InputStream, size: Float): FontReference = FreeTypeFontReference(fontStream, size) as FontReference
+        fun smooth(fontStream: InputStream, size: Float): FontReference = SmoothFontReference(fontStream, size) as FontReference
     }
 }

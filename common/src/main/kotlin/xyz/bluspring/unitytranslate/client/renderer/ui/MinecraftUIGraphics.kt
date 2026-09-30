@@ -15,8 +15,8 @@ import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
 import xyz.bluspring.unitytranslate.client.ClientPlatformProxy
 import xyz.bluspring.unitytranslate.client.renderer.FilterMode
 import xyz.bluspring.unitytranslate.client.renderer.ui.awt.AWTBackedUIGraphics
-import xyz.bluspring.unitytranslate.client.renderer.ui.font.FreeTypeFontReference
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.MinecraftFontReference
+import xyz.bluspring.unitytranslate.client.renderer.ui.font.SmoothFontReference
 import xyz.bluspring.unitytranslate.client.renderer.ui.minecraft.ColoredBlitRenderState
 import xyz.bluspring.unitytranslate.client.renderer.ui.minecraft.ColoredMeshBlitRenderState
 import xyz.bluspring.unitytranslate.client.renderer.ui.minecraft.GradientedFillRenderState
@@ -76,7 +76,7 @@ class MinecraftUIGraphics(private val graphics: GuiGraphicsExtractor) : AWTBacke
     override fun text(font: FontReference, text: TextComponent, x: Float, y: Float, color: Int, dropShadow: Boolean) {
         if (font is MinecraftFontReference) {
             graphics.text(font.font, text.asMinecraft(), x.toInt(), y.toInt(), color, dropShadow)
-        } else if (font is FreeTypeFontReference) {
+        } else if (font is SmoothFontReference) {
             font.awtRenderer = this.awtRenderer
             font.draw(graphics.pose(), text, x, y, color, dropShadow, guiScale.toFloat())
         }

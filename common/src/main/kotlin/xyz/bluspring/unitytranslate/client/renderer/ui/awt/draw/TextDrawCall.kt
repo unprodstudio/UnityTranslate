@@ -3,14 +3,14 @@ package xyz.bluspring.unitytranslate.client.renderer.ui.awt.draw
 import org.joml.Matrix3x2fc
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
 import xyz.bluspring.unitytranslate.api.v2.util.ARGBHelper
-import xyz.bluspring.unitytranslate.client.renderer.ui.font.FreeTypeFontReference
-import xyz.bluspring.unitytranslate.client.renderer.ui.font.FreeTypeFontReference.Companion.asAwtStyle
+import xyz.bluspring.unitytranslate.client.renderer.ui.font.SmoothFontReference
+import xyz.bluspring.unitytranslate.client.renderer.ui.font.SmoothFontReference.Companion.asAwtStyle
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.RenderingHints
 
 @JvmRecord
-data class TextDrawCall(val font: FreeTypeFontReference, override val matrix: Matrix3x2fc, val text: TextComponent, val color: Int, val x: Float, val y: Float, val dropShadow: Boolean) : AWTDrawCall {
+data class TextDrawCall(val font: SmoothFontReference, override val matrix: Matrix3x2fc, val text: TextComponent, val color: Int, val x: Float, val y: Float, val dropShadow: Boolean) : AWTDrawCall {
     override fun draw(graphics: Graphics2D,  guiScale: Float) {
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
 

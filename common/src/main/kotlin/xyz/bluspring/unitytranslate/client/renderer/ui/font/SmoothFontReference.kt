@@ -14,7 +14,7 @@ import java.awt.geom.AffineTransform
 import java.io.InputStream
 import kotlin.math.roundToInt
 
-class FreeTypeFontReference(stream: InputStream, val fontSize: Float) : FontReference {
+class SmoothFontReference(stream: InputStream, val fontSize: Float) : FontReference {
     val font: Font = Font.createFonts(stream)[0]
         .deriveFont(fontSize)
     private val context = FontRenderContext(AffineTransform(), true, false)
