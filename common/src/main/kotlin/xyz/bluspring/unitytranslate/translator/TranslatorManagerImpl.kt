@@ -121,6 +121,13 @@ object TranslatorManagerImpl : TranslatorManager {
 
     fun queueWithId(text: String, langPair: LangPair, id: String, timeUpdated: Long): Deferred<String> {
         val deferred: CompletableDeferred<String> = CompletableDeferred()
+
+        // Safeguard so we don't waste bandwidth for no good reason
+        if (langPair.from == langPair.to) {
+            deferred.complete(text)
+            return deferred
+        }
+
         this.queued.computeIfAbsent(langPair) { ConcurrentLinkedQueue() }
             .add(Entry(text, deferred, id, timeUpdated))
 
