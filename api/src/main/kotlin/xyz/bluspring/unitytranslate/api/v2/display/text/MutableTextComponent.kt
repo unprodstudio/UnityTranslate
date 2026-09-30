@@ -42,6 +42,10 @@ class MutableTextComponent @JvmOverloads constructor(
         return hash
     }
 
+    override fun toString(): String {
+        return "MutableTextComponent[text=\"${this.string}\",style=${this.style}]"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
