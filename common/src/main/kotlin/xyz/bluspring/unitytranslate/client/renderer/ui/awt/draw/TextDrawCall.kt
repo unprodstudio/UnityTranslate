@@ -109,8 +109,6 @@ data class TextDrawCall(val font: SmoothFontReference, override val matrix: Matr
 
         val layout = TextLayout(attributedText.iterator, graphics.fontRenderContext)
         layout.draw(graphics, x, y)
-
-        graphics.dispose()
     }
 
     companion object {
