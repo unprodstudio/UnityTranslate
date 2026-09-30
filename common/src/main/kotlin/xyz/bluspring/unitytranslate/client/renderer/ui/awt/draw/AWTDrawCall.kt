@@ -15,6 +15,7 @@ interface AWTDrawCall {
         val graphics = layer.requestGraphics()
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
 
+        val previous = graphics.transform
         graphics.transform(
             AffineTransform(
                 matrix.m00(), matrix.m01(),
@@ -23,6 +24,7 @@ interface AWTDrawCall {
             )
         )
         this.draw(graphics, guiScale)
+        graphics.transform = previous
     }
 
     fun draw(graphics: Graphics2D, guiScale: Float)
