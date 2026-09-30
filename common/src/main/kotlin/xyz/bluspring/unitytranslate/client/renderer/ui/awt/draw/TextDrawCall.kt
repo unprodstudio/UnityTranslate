@@ -6,40 +6,135 @@ import xyz.bluspring.unitytranslate.api.v2.util.ARGBHelper
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.SmoothFontReference
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.SmoothFontReference.Companion.asAwtStyle
 import java.awt.Color
+import java.awt.Font
 import java.awt.Graphics2D
 import java.awt.RenderingHints
+import java.awt.font.TextAttribute
+import java.awt.font.TextLayout
+import java.text.AttributedString
 
 @JvmRecord
 data class TextDrawCall(val font: SmoothFontReference, override val matrix: Matrix3x2fc, val text: TextComponent, val color: Int, val x: Float, val y: Float, val dropShadow: Boolean) : AWTDrawCall {
     override fun draw(graphics: Graphics2D,  guiScale: Float) {
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
 
-        var currentX = x
+        val fullString = text.string
+        val colorMap = mutableMapOf<Int, Int>()
+        colorMap[0] = color
+
+        var currentColor = Color(color, true)
+        var currentIndex = 0
+
+        val attributedText = AttributedString(fullString, mapOf(
+            TextAttribute.FOREGROUND to currentColor,
+            TextAttribute.FONT to font.font.deriveFont(Font.PLAIN, font.font.size2D * guiScale),
+        ))
+
         text.visit({ component, style ->
-            val currentColor = ARGBHelper.multiply((style.color ?: -1), color)
+            val endIndex = currentIndex + component.length
+            if (endIndex == currentIndex) // we didn't end up moving much
+                return@visit
+
+            val nextColor = ARGBHelper.multiply((style.color ?: -1), color)
             val font = font.font.deriveFont(style.asAwtStyle, font.font.size2D * guiScale)
-            graphics.font = font
+            attributedText.addAttribute(TextAttribute.FONT, font, currentIndex, endIndex)
 
-            val bounds = font.getStringBounds(component, graphics.fontRenderContext)
-            graphics.color = Color(currentColor)
-
-            if (style.underlined == true)
-                graphics.fillRect(x.toInt(), (y + bounds.height).toInt(), bounds.width.toInt(), 1)
-
-            if (style.strikethrough == true)
-                graphics.fillRect(x.toInt(), (y + (bounds.height / 2)).toInt(), bounds.width.toInt(), 1)
-
-            if (dropShadow) {
-                graphics.color =
-                    Color(ARGBHelper.multiply(currentColor, ARGBHelper.colorFromFloat(1f, 0.2f, 0.2f, 0.2f)))
-                graphics.drawString(component, currentX + guiScale, y + guiScale)
-                graphics.color = Color(currentColor)
+            if (currentColor.rgb != nextColor) {
+                val color = Color(nextColor, true)
+                attributedText.addAttribute(TextAttribute.FOREGROUND, color, currentIndex, endIndex)
+                colorMap[currentIndex] = nextColor
+                currentColor = color
+            } else {
+                attributedText.addAttribute(TextAttribute.FOREGROUND, currentColor, currentIndex, endIndex)
             }
 
-            graphics.drawString(component, currentX, y)
-            currentX += bounds.width.toFloat()
+            if (style.underlined == true)
+                attributedText.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, currentIndex, endIndex)
+
+            if (style.strikethrough == true)
+                attributedText.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON, currentIndex, endIndex)
+
+            // time to figure out font fallbacks :D
+
+            var fallbackStart = -1
+            var currentFont = font
+            for ((index, c) in component.withIndex()) {
+                if (Character.isWhitespace(c))
+                    continue
+
+                val nextFont = font.orElseFallback(c)
+                if (nextFont !== currentFont) {
+                    if (fallbackStart != -1) {
+                        attributedText.addAttribute(TextAttribute.FONT, currentFont.deriveFont(font.style, font.size2D), currentIndex + fallbackStart, currentIndex + index)
+                        currentFont = nextFont
+
+                        fallbackStart = if (nextFont !== font)
+                            index
+                        else
+                            -1
+                    } else {
+                        fallbackStart = index
+                        currentFont = nextFont
+                    }
+                }
+            }
+
+            if (fallbackStart != -1) {
+                attributedText.addAttribute(TextAttribute.FONT, currentFont.deriveFont(font.style, font.size2D), currentIndex + fallbackStart, endIndex)
+            }
+
+            currentIndex += component.length
         })
 
+        if (dropShadow) {
+            // unfortunately, AWT doesn't allow us to really do shadow colours, so we have to manually override it.
+            val shadowCopy = AttributedString(attributedText.iterator)
+            val indices = colorMap.keys.sorted()
+            for ((startIndex, color) in colorMap) {
+                val shadowColor = Color(ARGBHelper.multiply(color, ARGBHelper.colorFromFloat(1f, 0.2f, 0.2f, 0.2f)))
+                val indexOfIndex = indices.indexOf(startIndex)
+                if (indexOfIndex < indices.lastIndex) {
+                    val nextIndex = indices[indexOfIndex + 1]
+                    shadowCopy.addAttribute(TextAttribute.FOREGROUND, shadowColor, startIndex, nextIndex)
+                } else {
+                    shadowCopy.addAttribute(TextAttribute.FOREGROUND, shadowColor, startIndex, fullString.length)
+                }
+            }
+
+            val layout = TextLayout(shadowCopy.iterator, graphics.fontRenderContext)
+            graphics.color = Color(ARGBHelper.multiply(color, ARGBHelper.colorFromFloat(1f, 0.2f, 0.2f, 0.2f)))
+            layout.draw(graphics, x + guiScale, y + guiScale)
+            graphics.color = Color(color)
+        }
+
+        val layout = TextLayout(attributedText.iterator, graphics.fontRenderContext)
+        layout.draw(graphics, x, y)
+
         graphics.dispose()
+    }
+
+    companion object {
+        private val fallbackFonts = listOfNotNull(
+            // okay listen we're trying to find all available fonts that can support at least something
+            Font.decode("Arial"),
+            Font.decode("Liberation Sans"),
+            Font.decode("DejaVu Sans"),
+            Font.decode("Noto Sans"),
+            Font.decode("Serif"),
+        ).toTypedArray()
+
+        private fun Font.orElseFallback(c: Char): Font {
+            if (this.canDisplay(c))
+                return this
+
+            for (font in fallbackFonts) {
+                // Try to find first-supported fonts for this character.
+                if (font.canDisplay(c))
+                    return font
+            }
+
+            // eh.
+            return this
+        }
     }
 }
