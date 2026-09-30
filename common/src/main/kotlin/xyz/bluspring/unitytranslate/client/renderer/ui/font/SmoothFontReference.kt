@@ -105,9 +105,6 @@ class SmoothFontReference(stream: InputStream, val fontSize: Float) : FontRefere
         // We want to make sure any matrix translations abide by the GUI scale.
         matrix.translate(matrix.m20() * guiScale - matrix.m20(), matrix.m21() * guiScale - matrix.m21())
 
-        val x = x * guiScale
-        val y = y * guiScale
-
         layer.addDrawCall(TextDrawCall(this, matrix, text, color, x, y, dropShadow))
     }
 

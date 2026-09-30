@@ -169,7 +169,7 @@ class TranscriptBoxContainer(var holder: TranscriptHolder, val config: Transcrip
             else 1f
 
             for (sequence in font.split(text, this.width.toInt() - 4).reversed()) {
-                val hasShadow = this.config.shadowColor.alpha() <= 10
+                val hasShadow = this.config.shadowColor.alpha() >= 10
                 graphics.text(font, sequence, 0f, -offset, this.config.textColor.multiplyAlpha(fadeMultiplier), hasShadow) // TODO: shadow
                 offset += font.lineHeight
             }

@@ -103,12 +103,12 @@ data class TextDrawCall(val font: SmoothFontReference, override val matrix: Matr
 
             val layout = TextLayout(shadowCopy.iterator, graphics.fontRenderContext)
             graphics.color = Color(ARGBHelper.multiply(color, ARGBHelper.colorFromFloat(1f, 0.2f, 0.2f, 0.2f)))
-            layout.draw(graphics, x + guiScale, y + guiScale)
+            layout.draw(graphics, x * guiScale + guiScale, y * guiScale + guiScale)
             graphics.color = Color(color)
         }
 
         val layout = TextLayout(attributedText.iterator, graphics.fontRenderContext)
-        layout.draw(graphics, x, y)
+        layout.draw(graphics, x * guiScale, y * guiScale)
     }
 
     companion object {
