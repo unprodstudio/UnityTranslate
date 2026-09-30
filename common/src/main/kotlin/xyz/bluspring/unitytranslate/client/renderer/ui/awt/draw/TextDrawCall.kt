@@ -5,6 +5,7 @@ import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
 import xyz.bluspring.unitytranslate.api.v2.util.ARGBHelper
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.SmoothFontReference
 import xyz.bluspring.unitytranslate.client.renderer.ui.font.SmoothFontReference.Companion.asAwtStyle
+import xyz.bluspring.unitytranslate.client.renderer.ui.font.SmoothFontReference.Companion.orElseFallback
 import java.awt.Color
 import java.awt.Font
 import java.awt.Graphics2D
@@ -109,30 +110,5 @@ data class TextDrawCall(val font: SmoothFontReference, override val matrix: Matr
 
         val layout = TextLayout(attributedText.iterator, graphics.fontRenderContext)
         layout.draw(graphics, x * guiScale, y * guiScale)
-    }
-
-    companion object {
-        private val fallbackFonts = listOfNotNull(
-            // okay listen we're trying to find all available fonts that can support at least something
-            Font.decode("Arial"),
-            Font.decode("Liberation Sans"),
-            Font.decode("DejaVu Sans"),
-            Font.decode("Noto Sans"),
-            Font.decode("Serif"),
-        ).toTypedArray()
-
-        private fun Font.orElseFallback(c: Char): Font {
-            if (this.canDisplay(c))
-                return this
-
-            for (font in fallbackFonts) {
-                // Try to find first-supported fonts for this character.
-                if (font.canDisplay(c))
-                    return font
-            }
-
-            // eh.
-            return this
-        }
     }
 }

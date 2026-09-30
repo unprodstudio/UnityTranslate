@@ -22,28 +22,45 @@ class SmoothFontReference(stream: InputStream, val fontSize: Float) : FontRefere
     lateinit var awtRenderer: AWTRenderer
 
     override val lineHeight: Int
-        get() = (Toolkit.getDefaultToolkit().getFontMetrics(this.font).height) / 2 + 2
+        get() = ((Toolkit.getDefaultToolkit().getFontMetrics(this.font).height) / 2 + 2).coerceAtLeast(10)
 
     override fun width(text: TextComponent): Int {
-        var width = 0
+        var width = 0.0
 
         text.visit({ component, style ->
-            var fontStyle = Font.PLAIN
-            if (style.bold == true)
-                fontStyle = fontStyle or Font.BOLD
+            val fontStyle = style.asAwtStyle
 
-            if (style.italic == true)
-                fontStyle = fontStyle or Font.ITALIC
+            var currentFont = font
+            var currentSegment = ""
+            for (c in component) {
+                if (Character.isWhitespace(c)) {
+                    currentSegment += c
+                    continue
+                }
 
-            val font = this.font.deriveFont(fontStyle, this.fontSize)
-            width += font.getStringBounds(component, context).width.roundToInt()
+                val nextFont = font.orElseFallback(c)
+                if (nextFont !== currentFont) {
+                    if (currentSegment.isNotEmpty()) {
+                        width += currentFont.deriveFont(fontStyle, fontSize).getStringBounds(currentSegment, context).width
+                    }
+
+                    currentFont = nextFont
+                    currentSegment = ""
+                }
+
+                currentSegment += c
+            }
+
+            if (currentSegment.isNotEmpty()) {
+                width += currentFont.deriveFont(fontStyle, fontSize).getStringBounds(currentSegment, context).width
+            }
         })
 
-        return width
+        return width.roundToInt()
     }
 
     override fun width(text: String): Int {
-        return font.getStringBounds(text, context).width.roundToInt()
+        return this.width(TextComponent.literal(text))
     }
 
     override fun split(
@@ -120,5 +137,28 @@ class SmoothFontReference(stream: InputStream, val fontSize: Float) : FontRefere
 
                 return current
             }
+
+        private val fallbackFonts = listOfNotNull(
+            // okay listen we're trying to find all available fonts that can support at least something
+            Font.decode("Arial"),
+            Font.decode("Liberation Sans"),
+            Font.decode("DejaVu Sans"),
+            Font.decode("Noto Sans"),
+            Font.decode("Serif"),
+        ).toTypedArray()
+
+        fun Font.orElseFallback(c: Char): Font {
+            if (this.canDisplay(c))
+                return this
+
+            for (font in fallbackFonts) {
+                // Try to find first-supported fonts for this character.
+                if (font.canDisplay(c))
+                    return font
+            }
+
+            // eh.
+            return this
+        }
     }
 }
