@@ -6,6 +6,7 @@ import net.minecraft.server.packs.PackResources
 import net.minecraft.server.packs.PackType
 import net.minecraft.server.packs.metadata.MetadataSectionType
 import net.minecraft.server.packs.resources.IoSupplier
+import xyz.bluspring.unitytranslate.UnityTranslate
 import xyz.bluspring.unitytranslate.standalone.UnityTranslateStandalone
 import java.io.InputStream
 
@@ -25,7 +26,7 @@ object StandalonePackResources : PackResources {
     }
 
     override fun getNamespaces(type: PackType): Set<String> {
-        return setOf("minecraft", "unitytranslate")
+        return setOf(Identifier.DEFAULT_NAMESPACE, UnityTranslate.MOD_ID)
     }
 
     override fun <T : Any> getMetadataSection(metadataSerializer: MetadataSectionType<T>): T? {
