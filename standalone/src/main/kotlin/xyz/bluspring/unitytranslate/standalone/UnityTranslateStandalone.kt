@@ -1,16 +1,15 @@
 package xyz.bluspring.unitytranslate.standalone
 
 import com.google.gson.JsonParser
-import com.mojang.blaze3d.opengl.GlBackend
 import com.mojang.blaze3d.pipeline.MainTarget
 import com.mojang.blaze3d.platform.*
-import com.mojang.blaze3d.shaders.GpuDebugOptions
 import com.mojang.blaze3d.systems.*
+import com.mojang.renderpearl.api.device.GpuDebugOptions
+import com.mojang.renderpearl.api.device.GpuDevice
+import com.mojang.renderpearl.api.device.GpuSurface
+import com.mojang.renderpearl.backend.vulkan.VulkanBackend
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.FramerateLimiter
-import net.minecraft.client.input.CharacterEvent
-import net.minecraft.client.input.KeyEvent
-import net.minecraft.client.input.MouseButtonInfo
 import net.minecraft.util.Util
 import net.minecraft.util.profiling.Profiler
 import net.minecraft.util.thread.ReentrantBlockableEventLoop
@@ -22,9 +21,7 @@ import xyz.bluspring.unitytranslate.client.renderer.UnityTranslateGui
 import xyz.bluspring.unitytranslate.client.renderer.ui.BatchedUIGraphics
 import xyz.bluspring.unitytranslate.shared.HandledException
 import xyz.bluspring.unitytranslate.shared.Metadata
-import xyz.bluspring.unitytranslate.standalone.input.Keyboard
 import xyz.bluspring.unitytranslate.standalone.input.Mouse
-import xyz.bluspring.unitytranslate.standalone.resources.ShaderManager
 import xyz.bluspring.unitytranslate.standalone.resources.StandalonePackResources
 import xyz.bluspring.unitytranslate.standalone.ui.StandaloneScreen
 import java.util.*
@@ -52,7 +49,7 @@ object UnityTranslateStandalone : ReentrantBlockableEventLoop<Runnable>("UnityTr
         var window: Window? = null
         lateinit var device: GpuDevice
 
-        val backends = listOf(GlBackend())
+        val backends = listOf(VulkanBackend())
 
         for (backend in backends) {
             try {
@@ -62,10 +59,7 @@ object UnityTranslateStandalone : ReentrantBlockableEventLoop<Runnable>("UnityTr
 //                GLFW.glfwWindowHint(GLFW.GLFW_MOUSE_PASSTHROUGH, GLFW.GLFW_TRUE) // Allow clicking the mouse through the window
 
                 window = Window(this, DisplayData(843, 600, OptionalInt.empty(), OptionalInt.empty(), false), null, false, "UnityTranslate", MonitorManager(), backend)
-                device = window.backend().createDevice(window.handle(),
-                    ShaderManager::getShader,
-                    GpuDebugOptions(0, false, false, false)
-                ) {}
+                device = backend.createDevice(GpuDebugOptions(0, false, false, false))
                 GLFW.glfwShowWindow(window.handle())
 
                 val deviceInfo = device.deviceInfo
@@ -98,30 +92,6 @@ object UnityTranslateStandalone : ReentrantBlockableEventLoop<Runnable>("UnityTr
         } catch (e: Throwable) {
             UnityTranslate.logger.error("Couldn't set icon", e)
         }
-
-        InputConstants.setupMouseCallbacks(this.window,
-            { handle, x, y ->
-                this.execute { Mouse.onMove(handle, x, y) }
-            },
-            { handle, button, action, modifiers ->
-                this.execute { Mouse.onPress(handle, MouseButtonInfo(button, modifiers), action) }
-            },
-            { handle, scrollX, scrollY ->
-                this.execute { Mouse.onScroll(handle, scrollX, scrollY) }
-            },
-            { handle, count, namesPtr ->
-                // TODO: do we want this?
-            })
-
-        InputConstants.setupKeyboardCallbacks(this.window, { handle, key, scanCode, action, modifiers ->
-            this.execute { Keyboard.keyPress(handle, action, KeyEvent(key, scanCode, modifiers)) }
-        }, { handle, codepoint ->
-            this.execute { Keyboard.charTyped(handle, CharacterEvent(codepoint)) }
-        }, { handle, preeditSize, preeditPtr, blockCount, blockSizesPtr, focusedBlock, caret ->
-            // TODO: do we need this?
-        }, { handle ->
-            // TODO: do we need this?
-        })
     }
 
     @JvmStatic
