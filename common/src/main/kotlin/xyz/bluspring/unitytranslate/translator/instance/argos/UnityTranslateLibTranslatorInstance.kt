@@ -24,7 +24,7 @@ object UnityTranslateLibTranslatorInstance : TranslatorInstance() {
     var enableGpu = false
     private var lastEnabledGpu = false
 
-    private val packagePrepareDispatcher = Executors.newWorkStealingPool(4.coerceAtLeast(Runtime.getRuntime().availableProcessors()))
+    private val packagePrepareDispatcher = Executors.newWorkStealingPool(4.coerceAtMost(Runtime.getRuntime().availableProcessors()))
         .asCoroutineDispatcher() + CoroutineName("UnityTranslate Library Package Prepare")
     private val packagePrepareScope = CoroutineScope(this.packagePrepareDispatcher)
 
