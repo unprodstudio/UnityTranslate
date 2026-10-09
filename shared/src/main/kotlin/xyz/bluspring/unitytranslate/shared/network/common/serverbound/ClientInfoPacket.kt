@@ -1,11 +1,8 @@
-package xyz.bluspring.unitytranslate.network.common.serverbound
+package xyz.bluspring.unitytranslate.shared.network.common.serverbound
 
-import io.netty.buffer.ByteBuf
 import xyz.bluspring.modernnetworking.api.v2.codec.CompositeCodecs
 import xyz.bluspring.modernnetworking.api.v2.codec.NetworkCodecs
-import xyz.bluspring.modernnetworking.api.v2.packet.NetworkPacket
-import xyz.bluspring.modernnetworking.api.v2.packet.PacketDefinition
-import xyz.bluspring.unitytranslate.network.UnityTranslateCommonPackets
+import xyz.bluspring.unitytranslate.shared.network.SharedNetworkPacket
 
 @JvmRecord
 data class ClientInfoPacket(
@@ -30,11 +27,10 @@ data class ClientInfoPacket(
      * respected when the other client is in Standalone mode.
      */
     val username: String,
-) : NetworkPacket {
-    override val definition: PacketDefinition<out ByteBuf, out NetworkPacket>
-        get() = UnityTranslateCommonPackets.CLIENT_INFO
-
+) : SharedNetworkPacket {
     companion object {
+        const val PACKET_ID = "client_info"
+
         val CODEC = CompositeCodecs.composite(
             NetworkCodecs.VAR_INT, ClientInfoPacket::protocolVersion,
             NetworkCodecs.STRING_UTF8, ClientInfoPacket::clientVersion,

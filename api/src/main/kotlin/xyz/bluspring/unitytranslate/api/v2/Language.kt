@@ -1,6 +1,7 @@
 package xyz.bluspring.unitytranslate.api.v2
 
 import com.mojang.serialization.Codec
+import xyz.bluspring.modernnetworking.api.v2.codec.NetworkCodecs
 import xyz.bluspring.unitytranslate.api.v2.util.reverse
 
 @JvmRecord
@@ -69,6 +70,7 @@ data class Language @JvmOverloads constructor(
 
     companion object {
         @JvmField val CODEC: Codec<Language> = Codec.STRING.xmap(Language::parse, Language::formatted)
+        @JvmField val NETWORK_CODEC = NetworkCodecs.STRING_UTF8.xmap(Language::parse, Language::formatted)
 
         @JvmStatic fun codecWithAliasing(aliases: Map<Language, String>): Codec<Language> {
             val reverseLookup = aliases.reverse()

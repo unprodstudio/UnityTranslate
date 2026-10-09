@@ -58,6 +58,7 @@ dependencies {
     api(libs.sunset)
     api(libs.plasmo.api.server)
     api(libs.plasmo.api.client)
+    compileOnly(libs.netty)
 
     api("xyz.bluspring.modernnetworking:modernnetworking-api:${libs.versions.modernnetworking.get()}")
     api("xyz.bluspring.modernnetworking:modernnetworking-common:${libs.versions.modernnetworking.get()}+${property("modernnetworking_mc")}")

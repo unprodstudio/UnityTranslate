@@ -6,7 +6,6 @@ import xyz.bluspring.modernnetworking.api.v2.codec.NetworkCodecs
 import xyz.bluspring.modernnetworking.api.v2.packet.NetworkPacket
 import xyz.bluspring.modernnetworking.api.v2.packet.PacketDefinition
 import xyz.bluspring.unitytranslate.api.v2.Language
-import xyz.bluspring.unitytranslate.network.AdditionalNetworkCodecs
 import xyz.bluspring.unitytranslate.network.UnityTranslateGamePackets
 import java.util.*
 
