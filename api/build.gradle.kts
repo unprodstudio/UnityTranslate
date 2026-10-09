@@ -16,6 +16,7 @@ dependencies {
     api(libs.unitytranslatelib.get())
     api(libs.joml)
     api(libs.modernnetworking.api)
+    compileOnly(libs.netty)
 
     compileOnly(stubs.output)
 }

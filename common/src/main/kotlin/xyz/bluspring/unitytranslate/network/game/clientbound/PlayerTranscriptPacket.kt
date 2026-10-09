@@ -23,8 +23,8 @@ data class PlayerTranscriptPacket(
         val CODEC = CompositeCodecs.composite(
             NetworkCodecs.UUID, PlayerTranscriptPacket::sender,
             NetworkCodecs.STRING_UTF8, PlayerTranscriptPacket::text,
-            AdditionalNetworkCodecs.LANGUAGE, PlayerTranscriptPacket::sourceLanguage,
-            AdditionalNetworkCodecs.LANGUAGE, PlayerTranscriptPacket::translatedLanguage,
+            Language.NETWORK_CODEC, PlayerTranscriptPacket::sourceLanguage,
+            Language.NETWORK_CODEC, PlayerTranscriptPacket::translatedLanguage,
             ::PlayerTranscriptPacket
         )
     }
