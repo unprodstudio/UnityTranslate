@@ -10,5 +10,6 @@ dependencies {
     api(project(":api"))
     api(libs.bundles.kotlin)
     api(libs.datafixerupper.get())
+    api(libs.modernnetworking.api)
+    compileOnly(libs.netty)
 }
-
