@@ -16,7 +16,6 @@ import xyz.bluspring.unitytranslate.translator.instance.argos.index.ArgosPackage
 import xyz.bluspring.unitytranslate.translator.instance.argos.index.ModelInfo
 import xyz.bluspring.unitytranslate.translator.instance.argos.index.ModelPackage
 import xyz.bluspring.unitytranslate.translator.instance.argos.index.PackageIndex
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 
@@ -37,8 +36,8 @@ object UnityTranslateLibTranslatorInstance : TranslatorInstance() {
         ArgosPackageIndex(UnityTranslateApi.instance.storagePath.resolve("models/translator/argos")),
     )
 
-    val instances: MutableMap<LangPair, UnityTranslateLibInstance> = Collections.synchronizedMap(mutableMapOf())
-    private val instanceLocks: MutableMap<LangPair, Mutex> = Collections.synchronizedMap(mutableMapOf())
+    val instances: MutableMap<LangPair, UnityTranslateLibInstance> = ConcurrentHashMap()
+    private val instanceLocks: MutableMap<LangPair, Mutex> = ConcurrentHashMap()
     private val queuedWaitingForInstance: Multimap<LangPair, CompletableDeferred<Unit>> = HashMultimap.create()
 
     private val cachedTranslationPath = ConcurrentHashMap<LangPair, List<LangPair>>()
