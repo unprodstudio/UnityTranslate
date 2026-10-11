@@ -209,7 +209,9 @@ object TranslatorManagerImpl : TranslatorManager {
                             .map { b -> b.joinToString(" ") }
                     }
 
-                    val batchTranslated = instance.batchTranslate(spliced.flatten(), langPair)
+                    val batchTranslated = spliced.flatten().chunked(Config.batchSize).flatMap {
+                        instance.batchTranslate(it, langPair)
+                    }
                     val combined = mutableListOf<String>()
 
                     // now join them back so they're not that bad
