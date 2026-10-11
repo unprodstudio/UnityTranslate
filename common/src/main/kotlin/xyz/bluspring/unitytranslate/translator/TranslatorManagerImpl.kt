@@ -15,10 +15,7 @@ import xyz.bluspring.unitytranslate.translator.instance.InactiveTranslatorInstan
 import xyz.bluspring.unitytranslate.translator.instance.argos.UnityTranslateLibTranslatorInstance
 import xyz.bluspring.unitytranslate.translator.instance.microsoft.MicrosoftInternalTranslatorInstance
 import java.util.Queue
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import java.util.concurrent.*
 import java.util.concurrent.locks.LockSupport
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration.Companion.milliseconds
@@ -31,6 +28,7 @@ object TranslatorManagerImpl : TranslatorManager {
         var batchSize: Int = 15
         var delayBetweenBatches: Int = 500
         var maxTranslationWords: Int = 50
+        var maxTranslationTimeout: Int = 5_000
     }
 
     private lateinit var pool: ExecutorService
@@ -76,6 +74,7 @@ object TranslatorManagerImpl : TranslatorManager {
 
     private val queued = ConcurrentHashMap<LangPair, Queue<Entry>>()
     private var lastBatchTime: Long = 0L
+    private val busyLangPairs = ConcurrentLinkedDeque<LangPair>()
 
     @JvmRecord
     private data class Entry(
@@ -148,7 +147,8 @@ object TranslatorManagerImpl : TranslatorManager {
         this.updateConfig()
 
         // just to try to collect enough to even batch translate.
-        if (System.currentTimeMillis() - this.lastBatchTime <= Config.delayBetweenBatches)
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - this.lastBatchTime <= Config.delayBetweenBatches)
             return
 
         var anyTranslationsQueued = false
@@ -161,6 +161,10 @@ object TranslatorManagerImpl : TranslatorManager {
             } ?: InactiveTranslatorInstance
             val langPair = instance.getEffectiveLanguagePair(langPair) ?: langPair
 
+            // Skip over any lang pairs that are currently busy, so we don't overwhelm that translator. We'll just build up the queue.
+            if (this.busyLangPairs.contains(langPair))
+                continue
+
             val entries = ArrayList<Entry>(Config.batchSize)
             while (queue.isNotEmpty()) {
                 val entry = queue.poll()!!
@@ -168,6 +172,12 @@ object TranslatorManagerImpl : TranslatorManager {
                 // skip over any entries that may have been superseded.
                 if (entry.deferred.isCancelled)
                     continue
+
+                // Do not queue translations that have already timed out.
+                if (currentTime - entry.lastUpdated >= Config.maxTranslationTimeout) {
+                    entry.deferred.cancel("Timed out")
+                    continue
+                }
 
                 if (entries.none { it.id == entry.id }) {
                     entries.add(entry)
@@ -189,34 +199,39 @@ object TranslatorManagerImpl : TranslatorManager {
             }
 
             this.scope.launch(this.context) {
-                prepareScope.async { instance.prepareTranslationModels(langPair) }.await() // Make sure they're ready first.
+                busyLangPairs.add(langPair)
+                try {
+                    prepareScope.async { instance.prepareTranslationModels(langPair) }.await() // Make sure they're ready first.
 
-                val spliced = entries.map { // split them up so we don't have a Resa moment
-                    it.original.split(" ")
-                        .chunked(Config.maxTranslationWords)
-                        .map { b -> b.joinToString(" ") }
-                }
-
-                val batchTranslated = instance.batchTranslate(spliced.flatten(), langPair)
-                val combined = mutableListOf<String>()
-
-                // now join them back so they're not that bad
-                for ((i, texts) in spliced.withIndex()) {
-                    val length = texts.size
-
-                    combined += batchTranslated.slice(i until i + length).joinToString(" ")
-                }
-
-                for ((i, translated) in combined.withIndex()) {
-                    val original = translated
-                    var translated = original
-
-                    for ((processor, settings) in UnityTranslateApiImpl.postProcessors) {
-                        if ((settings.translatorInputLanguages == null || settings.translatorInputLanguages!!.contains(langPair.from)) && (settings.translatorOutputLanguages == null || settings.translatorOutputLanguages!!.contains(langPair.to)))
-                            translated = processor.processFinalTranscript(translated, original, langPair.from, langPair.to)
+                    val spliced = entries.map { // split them up so we don't have a Resa moment
+                        it.original.split(" ")
+                            .chunked(Config.maxTranslationWords)
+                            .map { b -> b.joinToString(" ") }
                     }
 
-                    entries[i].deferred.complete(translated)
+                    val batchTranslated = instance.batchTranslate(spliced.flatten(), langPair)
+                    val combined = mutableListOf<String>()
+
+                    // now join them back so they're not that bad
+                    for ((i, texts) in spliced.withIndex()) {
+                        val length = texts.size
+
+                        combined += batchTranslated.slice(i until i + length).joinToString(" ")
+                    }
+
+                    for ((i, translated) in combined.withIndex()) {
+                        val original = translated
+                        var translated = original
+
+                        for ((processor, settings) in UnityTranslateApiImpl.postProcessors) {
+                            if ((settings.translatorInputLanguages == null || settings.translatorInputLanguages!!.contains(langPair.from)) && (settings.translatorOutputLanguages == null || settings.translatorOutputLanguages!!.contains(langPair.to)))
+                                translated = processor.processFinalTranscript(translated, original, langPair.from, langPair.to)
+                        }
+
+                        entries[i].deferred.complete(translated)
+                    }
+                } finally {
+                    busyLangPairs.remove(langPair)
                 }
             }
 

@@ -169,6 +169,7 @@ object UnityTranslate {
                 integer("batch_size", 1, 50, 1, TranslatorManagerImpl.Config::batchSize)
                 integer("delay_between_batches", 0, 5000, 250, TranslatorManagerImpl.Config::delayBetweenBatches)
                 integer("max_translation_words", 50, step = 50, property = TranslatorManagerImpl.Config::maxTranslationWords)
+                integer("max_translation_timeout", 1000, 100_000, 250, TranslatorManagerImpl.Config::maxTranslationTimeout)
 
                 listValue("instances", Codec.STRING.dispatch("type", { UnityTranslateApiImpl.getTranslatorId(it) }, {
                     MapCodec.unit { UnityTranslateApiImpl.getTranslator(it) }
