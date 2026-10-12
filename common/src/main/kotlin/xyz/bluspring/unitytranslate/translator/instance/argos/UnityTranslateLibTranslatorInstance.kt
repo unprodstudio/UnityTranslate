@@ -32,6 +32,7 @@ object UnityTranslateLibTranslatorInstance : TranslatorInstance() {
             UnityTranslateLib()
         else null
     }
+
     val packageIndexes = listOf<PackageIndex<*>>(
         ArgosPackageIndex(UnityTranslateApi.instance.storagePath.resolve("models/translator/argos")),
     )
