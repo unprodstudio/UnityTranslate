@@ -1,5 +1,5 @@
 {
-    "name": "UnityTranslate Google API Transcriber",
+    "name": "UnityTranslate Google Transcriber",
     "group": "xyz.bluspring.unitytranslate",
     "id": "google_transcriber",
     "version": "${version}",
