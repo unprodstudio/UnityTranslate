@@ -81,7 +81,7 @@ object MicrosoftInternalTranslatorInstance : TranslatorInstance() {
                     it.asString
             }
         } catch (e: Throwable) {
-            logger.warn("Failed to translate texts (${text.joinToString(", ") { "\"it\"" }}) from ${langPair.from} -> ${langPair.to} under Bing translator!", e)
+            logger.warn("Failed to translate texts (${text.joinToString(", ") { "\"$it\"" }}) from ${langPair.from} -> ${langPair.to} under Bing translator!", e)
         }
 
         return text

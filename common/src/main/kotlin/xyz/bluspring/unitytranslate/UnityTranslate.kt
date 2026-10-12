@@ -29,6 +29,7 @@ import xyz.bluspring.unitytranslate.translator.TranslatorManagerImpl
 import xyz.bluspring.unitytranslate.translator.instance.InactiveTranslatorInstance
 import xyz.bluspring.unitytranslate.translator.instance.argos.LibreTranslateTranslatorInstance
 import xyz.bluspring.unitytranslate.translator.instance.argos.UnityTranslateLibTranslatorInstance
+import xyz.bluspring.unitytranslate.translator.instance.google.GoogleCloudTranslatorInstance
 import xyz.bluspring.unitytranslate.translator.instance.google.GoogleInternalTranslatorInstance
 import xyz.bluspring.unitytranslate.translator.instance.microsoft.MicrosoftInternalTranslatorInstance
 import java.text.DecimalFormat
@@ -59,6 +60,10 @@ object UnityTranslate {
         }
 
         UnityTranslateApi.instance.registerTranslator("google_internal", GoogleInternalTranslatorInstance) {
+        }
+
+        UnityTranslateApi.instance.registerTranslator("google_cloud", GoogleCloudTranslatorInstance) {
+            string("api_key", GoogleCloudTranslatorInstance.Config::apiKey)
         }
 
         UnityTranslateApi.instance.registerLanguageDisplay("none", BuiltinLanguageDisplays.None.CODEC)
