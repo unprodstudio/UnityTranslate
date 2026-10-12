@@ -29,6 +29,7 @@ import xyz.bluspring.unitytranslate.translator.TranslatorManagerImpl
 import xyz.bluspring.unitytranslate.translator.instance.InactiveTranslatorInstance
 import xyz.bluspring.unitytranslate.translator.instance.argos.LibreTranslateTranslatorInstance
 import xyz.bluspring.unitytranslate.translator.instance.argos.UnityTranslateLibTranslatorInstance
+import xyz.bluspring.unitytranslate.translator.instance.google.GoogleInternalTranslatorInstance
 import xyz.bluspring.unitytranslate.translator.instance.microsoft.MicrosoftInternalTranslatorInstance
 import java.text.DecimalFormat
 import kotlin.reflect.KMutableProperty
@@ -55,6 +56,9 @@ object UnityTranslate {
         }
 
         UnityTranslateApi.instance.registerTranslator("microsoft_internal", MicrosoftInternalTranslatorInstance) {
+        }
+
+        UnityTranslateApi.instance.registerTranslator("google_internal", GoogleInternalTranslatorInstance) {
         }
 
         UnityTranslateApi.instance.registerLanguageDisplay("none", BuiltinLanguageDisplays.None.CODEC)
