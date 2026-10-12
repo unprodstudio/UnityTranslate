@@ -21,6 +21,7 @@ import xyz.bluspring.unitytranslate.client.config.TranscriptBoxConfig
 import xyz.bluspring.unitytranslate.config.builders.SunsetWrappedConfigBuilder
 import xyz.bluspring.unitytranslate.config.values.HiddenReflectingConfigValue
 import xyz.bluspring.unitytranslate.integration.UnityTranslateIntegration
+import xyz.bluspring.unitytranslate.network.UnityTranslateGamePackets
 import xyz.bluspring.unitytranslate.plugin.PluginManager
 import xyz.bluspring.unitytranslate.shared.Constants
 import xyz.bluspring.unitytranslate.transcriber.TranscriberManager
@@ -42,7 +43,14 @@ object UnityTranslate {
         TranscriberManager() // Server transcriber manager, shouldn't be active unless it's enabled.
     }
 
+    fun initGame() {
+        UnityTranslateGamePackets.adaptFromCommon()
+        init()
+    }
+
     fun init() {
+        UnityTranslateServer.init()
+
         UnityTranslateApi.instance.registerTranscriber("inactive", InactiveTranscriber) {}
         UnityTranslateApi.instance.registerTranslator("inactive", InactiveTranslatorInstance) {}
 

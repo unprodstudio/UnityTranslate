@@ -5,6 +5,6 @@ import xyz.bluspring.unitytranslate.UnityTranslate
 
 class UnityTranslateFabric : ModInitializer {
     override fun onInitialize() {
-        UnityTranslate.init()
+        UnityTranslate.initGame()
     }
 }

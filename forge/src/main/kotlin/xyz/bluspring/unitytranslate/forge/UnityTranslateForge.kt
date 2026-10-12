@@ -6,6 +6,6 @@ import xyz.bluspring.unitytranslate.UnityTranslate
 @Mod(UnityTranslate.MOD_ID)
 class UnityTranslateForge {
     init {
-        UnityTranslate.init()
+        UnityTranslate.initGame()
     }
 }
