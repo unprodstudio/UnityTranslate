@@ -4,14 +4,16 @@ import io.netty.buffer.ByteBuf
 import xyz.bluspring.modernnetworking.api.v2.codec.CompositeCodecs
 import xyz.bluspring.modernnetworking.api.v2.codec.NetworkCodec
 import xyz.bluspring.modernnetworking.api.v2.codec.NetworkCodecs
+import xyz.bluspring.modernnetworking.api.v2.packet.NetworkPacket
+import xyz.bluspring.modernnetworking.api.v2.packet.PacketDefinition
 import xyz.bluspring.unitytranslate.shared.network.AddressType
 import xyz.bluspring.unitytranslate.shared.network.ConnectionType
-import xyz.bluspring.unitytranslate.shared.network.SharedNetworkPacket
+import xyz.bluspring.unitytranslate.shared.network.relay.UnityTranslateRelayPackets
 
 @JvmRecord
 data class SetupConnectionPacket(
     val status: ConnectionStatus,
-) : SharedNetworkPacket {
+) : NetworkPacket {
     companion object {
         const val PACKET_ID = "connection/setup"
 
@@ -26,6 +28,9 @@ data class SetupConnectionPacket(
             ::SetupConnectionPacket
         )
     }
+
+    override val definition: PacketDefinition<out ByteBuf, out NetworkPacket>
+        get() = UnityTranslateRelayPackets.SETUP_CONNECTION
 
     sealed interface ConnectionStatus {
         val id: String

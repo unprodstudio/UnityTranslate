@@ -1,7 +1,7 @@
 package xyz.bluspring.unitytranslate
 
 import xyz.bluspring.unitytranslate.network.handler.UnityTranslateNetworkHandlers
-import xyz.bluspring.unitytranslate.shared.network.UnityTranslateCommonPackets
+import xyz.bluspring.unitytranslate.shared.network.common.UnityTranslateCommonPackets
 
 object UnityTranslateServer {
     fun init() {

@@ -10,7 +10,7 @@ import xyz.bluspring.unitytranslate.network.handler.ServerHandlerContext
 import java.util.*
 
 object MinecraftServerPacketHandlerRegistry : PacketHandlerRegistry<ServerHandlerContext, UUID> {
-    override fun <B : ByteBuf, T : NetworkPacket> register(definition: PacketDefinition<B, T>, handler: PacketHandlerRegistry.PacketHandler<T, xyz.bluspring.unitytranslate.network.handler.ServerHandlerContext>) {
+    override fun <B : ByteBuf, T : NetworkPacket> register(definition: PacketDefinition<B, T>, handler: PacketHandlerRegistry.PacketHandler<T, ServerHandlerContext>) {
         MinecraftServerPacketHandlers.PLAY.register(definition) { packet, context ->
             handler.handle(packet,
                 ServerHandlerContext(

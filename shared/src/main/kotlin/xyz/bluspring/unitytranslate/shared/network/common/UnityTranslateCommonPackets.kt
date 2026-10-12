@@ -1,8 +1,7 @@
-package xyz.bluspring.unitytranslate.shared.network
+package xyz.bluspring.unitytranslate.shared.network.common
 
 import xyz.bluspring.modernnetworking.api.v2.packet.registry.DefaultedPacketRegistry
 import xyz.bluspring.unitytranslate.shared.Constants
-import xyz.bluspring.unitytranslate.shared.network.WrappedSharedNetworkPacket.Companion.register
 import xyz.bluspring.unitytranslate.shared.network.common.clientbound.EncryptionRequestPacket
 import xyz.bluspring.unitytranslate.shared.network.common.clientbound.NegotiationPacket
 import xyz.bluspring.unitytranslate.shared.network.common.clientbound.TranslatePacket
