@@ -23,6 +23,10 @@ setupCommonModDev("forge")
 val shadedDep by configurations.named("shadedDep")
 
 dependencies {
+    api(project(":shared")) {
+        isTransitive = false
+    }
+
     api(libs.mixinextras.forge)
     annotationProcessor(libs.mixinextras.forge)
     jarJar(libs.mixinextras.forge)

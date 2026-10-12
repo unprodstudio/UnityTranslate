@@ -18,5 +18,9 @@ setupCommonModDev("neoforge")
 val shadedDep by configurations.named("shadedDep")
 
 dependencies {
+    api(project(":shared")) {
+        isTransitive = false
+    }
+
     api("dev.nyon:KotlinLangForge:${libs.versions.kotlinlangforge.get()}-${klfLangVersion}+neoforge")
 }

@@ -35,6 +35,9 @@ val elementaConfig by configurations.creating {
 
 dependencies {
     implementation(project(":api"))
+    api(project(":shared")) {
+        isTransitive = false
+    }
     runtimeOnly(project(":common:${stonecutter.current.version}"))
     runtimeOnly(project(":transcribers:whisper"))
     runtimeOnly(project(":transcribers:google"))
