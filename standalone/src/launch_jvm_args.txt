@@ -8,6 +8,7 @@
 -Xmx2G
 -XX:+UseStringDeduplication
 -XX:+UseCompactObjectHeaders
+-XX:StackShadowPages=32
 
 # windows
 -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump
