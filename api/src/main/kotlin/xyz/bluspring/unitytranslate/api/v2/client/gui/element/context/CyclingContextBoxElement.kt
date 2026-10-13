@@ -1,6 +1,7 @@
 package xyz.bluspring.unitytranslate.api.v2.client.gui.element.context
 
 import xyz.bluspring.unitytranslate.api.v2.UnityTranslateApi
+import xyz.bluspring.unitytranslate.api.v2.client.InputValue
 import xyz.bluspring.unitytranslate.api.v2.client.gui.UIGraphics
 import xyz.bluspring.unitytranslate.api.v2.client.theme.ThemeConfig
 import xyz.bluspring.unitytranslate.api.v2.config.NameProvidingEntry
@@ -27,7 +28,7 @@ class CyclingContextBoxElement<E : NameProvidingEntry>(
 
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
         if (this.bounds().containsPoint(mouseX.toInt(), mouseY.toInt())) {
-            this.currentIndex += if (button == 0) 1 else if (button == 1) -1 else 0
+            this.currentIndex += if (button == InputValue.MOUSE_BUTTON_LEFT.asPlatform) 1 else if (button == InputValue.MOUSE_BUTTON_RIGHT.asPlatform) -1 else 0
             if (this.currentIndex < 0)
                 this.currentIndex = this.elements.lastIndex
             else if (this.currentIndex >= this.elements.size)

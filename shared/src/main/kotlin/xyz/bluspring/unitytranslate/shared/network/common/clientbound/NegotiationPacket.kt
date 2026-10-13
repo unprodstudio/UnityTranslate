@@ -10,12 +10,14 @@ import xyz.bluspring.unitytranslate.shared.network.common.UnityTranslateCommonPa
 @JvmRecord
 data class NegotiationPacket(
     val maxProtocolVersion: Int,
+    val allowSelfTranslation: Boolean,
 ) : NetworkPacket {
     companion object {
         const val PACKET_ID = "negotiate"
 
         val CODEC = CompositeCodecs.composite(
             NetworkCodecs.VAR_INT, NegotiationPacket::maxProtocolVersion,
+            NetworkCodecs.BOOL, NegotiationPacket::allowSelfTranslation,
             ::NegotiationPacket
         )
     }

@@ -34,6 +34,9 @@ abstract class MinecraftClientPlatformProxy : Blaze3DClientPlatformProxy() {
         }
     }
 
+    override val username: String
+        get() = Minecraft.getInstance().user.name
+
 //    override val defaultFont: FontReference
 //        get() = FontReference.minecraft(Minecraft.getInstance().font)
     override val defaultFont = FontReference.smooth(this::class.java.getResourceAsStream("/assets/unitytranslate/font/tiktok_sans.ttf")!!, 10f)

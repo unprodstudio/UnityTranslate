@@ -1,6 +1,7 @@
 package xyz.bluspring.unitytranslate.api.v2.client.gui.element.context
 
 import xyz.bluspring.unitytranslate.api.v2.UnityTranslateApi
+import xyz.bluspring.unitytranslate.api.v2.client.InputValue
 import xyz.bluspring.unitytranslate.api.v2.client.gui.UIGraphics
 import xyz.bluspring.unitytranslate.api.v2.client.theme.ThemeConfig
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
@@ -13,7 +14,7 @@ class ActionContextBoxElement(val text: TextComponent, val onClick: () -> Unit) 
     }
 
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-        if (this.bounds().containsPoint(mouseX.toInt(), mouseY.toInt()) && button == 0) {
+        if (this.bounds().containsPoint(mouseX.toInt(), mouseY.toInt()) && button == InputValue.MOUSE_BUTTON_LEFT.asPlatform) {
             this.onClick()
             return true
         }

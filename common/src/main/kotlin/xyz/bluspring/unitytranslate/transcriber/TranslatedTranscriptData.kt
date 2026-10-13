@@ -9,7 +9,6 @@ data class TranslatedTranscriptData(
     override val timeCreated: Long,
     override val sender: TranscriptUser,
     override val language: Language,
-    val original: String,
     override val message: String,
     override val timeUpdated: Long,
 ) : TranscriptData

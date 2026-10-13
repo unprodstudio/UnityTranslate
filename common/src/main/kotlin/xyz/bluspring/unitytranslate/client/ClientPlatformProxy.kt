@@ -10,6 +10,7 @@ interface ClientPlatformProxy : ClientAccess {
     val renderThread: Thread
 
     val windowHandle: Long
+    val username: String
 
     companion object {
         val instance: ClientPlatformProxy = ServiceLoader.load(ClientPlatformProxy::class.java).first()

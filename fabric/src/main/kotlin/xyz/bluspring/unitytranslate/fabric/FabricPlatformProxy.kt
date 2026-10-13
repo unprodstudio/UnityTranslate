@@ -12,6 +12,7 @@ class FabricPlatformProxy : PlatformProxy {
     override val nativesDir: Path = FabricLoader.getInstance().gameDir.resolve("unitytranslate/natives")
     override val rootDir: Path = FabricLoader.getInstance().gameDir
     override val isClient: Boolean = FabricLoader.getInstance().environmentType == EnvType.CLIENT
+    override val platform: String = "Minecraft ${FabricLoader.getInstance().rawGameVersion}, Fabric Loader ${FabricLoader.getInstance().getModContainer("fabricloader").orElseThrow().metadata.version.friendlyString}"
 
     override fun isModLoaded(id: String): Boolean = FabricLoader.getInstance().isModLoaded(id)
 }

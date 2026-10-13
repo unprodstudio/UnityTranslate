@@ -14,4 +14,8 @@ object UnityTranslateMCClient {
             PlasmoVoiceLoader.loadClient()
         }
     }
+
+    fun onLeaveServer() {
+        serverSupportsTranslator = false
+    }
 }

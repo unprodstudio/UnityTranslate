@@ -9,6 +9,7 @@ interface PlatformProxy {
     val pluginsDir: Path
     val nativesDir: Path
     val isClient: Boolean
+    val platform: String
 
     fun isStandalone(): Boolean = false
     fun isModLoaded(id: String): Boolean

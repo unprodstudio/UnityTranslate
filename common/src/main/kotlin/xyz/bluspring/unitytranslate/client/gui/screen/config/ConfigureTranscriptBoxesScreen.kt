@@ -1,6 +1,7 @@
 package xyz.bluspring.unitytranslate.client.gui.screen.config
 
 import xyz.bluspring.unitytranslate.api.v2.UnityTranslateApi
+import xyz.bluspring.unitytranslate.api.v2.client.InputValue
 import xyz.bluspring.unitytranslate.api.v2.client.gui.UIGraphics
 import xyz.bluspring.unitytranslate.api.v2.client.gui.element.HorizontalAlign
 import xyz.bluspring.unitytranslate.api.v2.client.gui.element.PlainUIButton
@@ -90,7 +91,7 @@ class ConfigureTranscriptBoxesScreen(private val onExit: () -> Unit = { ClientPl
             return true
         }
 
-        if (button == 1) {
+        if (button == InputValue.MOUSE_BUTTON_RIGHT.asPlatform) {
             for (container in this.renderer.containers.reversed()) {
                 val bounds = container.bounds().inflate(2)
                 if (bounds.containsPoint(mouseX.toInt(), mouseY.toInt())) {

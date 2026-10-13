@@ -15,7 +15,7 @@ object MinecraftServerPacketHandlerRegistry : PacketHandlerRegistry<ServerHandle
             handler.handle(packet,
                 ServerHandlerContext(
                     context.player.uuid,
-                    MinecraftServerProxy(context.server)
+                    MinecraftServerProxy(context.player, context.server)
                 )
             )
         }

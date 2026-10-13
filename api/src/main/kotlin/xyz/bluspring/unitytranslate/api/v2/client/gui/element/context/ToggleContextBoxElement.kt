@@ -1,6 +1,7 @@
 package xyz.bluspring.unitytranslate.api.v2.client.gui.element.context
 
 import xyz.bluspring.unitytranslate.api.v2.UnityTranslateApi
+import xyz.bluspring.unitytranslate.api.v2.client.InputValue
 import xyz.bluspring.unitytranslate.api.v2.client.gui.UIGraphics
 import xyz.bluspring.unitytranslate.api.v2.client.theme.ThemeConfig
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
@@ -23,7 +24,7 @@ class ToggleContextBoxElement(
 
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
         if (this.bounds().containsPoint(mouseX.toInt(), mouseY.toInt())) {
-            if (button == 0 || button == 1) {
+            if (button == InputValue.MOUSE_BUTTON_LEFT.asPlatform || button == InputValue.MOUSE_BUTTON_RIGHT.asPlatform) {
                 this.property.setter.call(!this.property.getter.call())
             }
 

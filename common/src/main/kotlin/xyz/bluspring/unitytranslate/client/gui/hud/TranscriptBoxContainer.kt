@@ -5,6 +5,7 @@ import net.minecraft.util.Mth
 import xyz.bluspring.unitytranslate.UnityTranslateApiImpl
 import xyz.bluspring.unitytranslate.api.v2.Language
 import xyz.bluspring.unitytranslate.api.v2.UnityTranslateApi
+import xyz.bluspring.unitytranslate.api.v2.client.InputValue
 import xyz.bluspring.unitytranslate.api.v2.client.gui.UIElement
 import xyz.bluspring.unitytranslate.api.v2.client.gui.UIGraphics
 import xyz.bluspring.unitytranslate.api.v2.client.gui.element.FocusableUIElement
@@ -337,7 +338,7 @@ class TranscriptBoxContainer(var holder: TranscriptHolder, val config: Transcrip
     }
 
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-        if (this.isInEditMode && button == 0 && this.isFocused) {
+        if (this.isInEditMode && button == InputValue.MOUSE_BUTTON_LEFT.asPlatform && this.isFocused) {
             this.startEditing(mouseX.toInt(), mouseY.toInt())
             this.setupMovingDirections(mouseX.toInt(), mouseY.toInt(), this.movingDirections)
             return true
@@ -347,7 +348,7 @@ class TranscriptBoxContainer(var holder: TranscriptHolder, val config: Transcrip
     }
 
     override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {
-        if (this.isInEditMode && button == 0 && this.movingDirections.isNotEmpty()) {
+        if (this.isInEditMode && button == InputValue.MOUSE_BUTTON_LEFT.asPlatform && this.movingDirections.isNotEmpty()) {
             this.movingDirections.clear()
 
             val screenWidth = ClientPlatformProxy.instance.viewportWidth

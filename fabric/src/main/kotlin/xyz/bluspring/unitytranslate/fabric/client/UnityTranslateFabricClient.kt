@@ -3,6 +3,7 @@ package xyz.bluspring.unitytranslate.fabric.client
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
 import net.minecraft.client.Minecraft
@@ -11,6 +12,7 @@ import net.minecraft.client.gui.screens.TitleScreen
 import xyz.bluspring.unitytranslate.UnityTranslate
 import xyz.bluspring.unitytranslate.client.ClientPlatformProxy
 import xyz.bluspring.unitytranslate.client.UnityTranslateClient
+import xyz.bluspring.unitytranslate.client.UnityTranslateMCClient
 import xyz.bluspring.unitytranslate.client.gui.LogoTransitionOverlay
 import xyz.bluspring.unitytranslate.client.renderer.UnityTranslateGui
 import xyz.bluspring.unitytranslate.client.renderer.ui.MinecraftUIGraphics
@@ -42,6 +44,10 @@ class UnityTranslateFabricClient : ClientModInitializer {
 
         ClientLifecycleEvents.CLIENT_STOPPING.register { _ ->
             UnityTranslateClient.onClose()
+        }
+
+        ClientPlayConnectionEvents.DISCONNECT.register { listener, minecraft ->
+            UnityTranslateMCClient.onLeaveServer()
         }
 
         ClientTickEvents.END_CLIENT_TICK.register { client ->
