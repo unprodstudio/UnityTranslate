@@ -49,4 +49,4 @@ The complete text for each software license can be found in the directory "third
 * Copyright © 1998-2026 Roman Czyborra, Paul Hardy, and contributors
 * License: SIL Open Font License v1.1 (SPDX: OFL-1.1) & GPLv2 with GNU Font Embedding exception (SPDX: GPL-2.0)
 * Original Source:
-  * https://github.com/multitheftauto/unifont
+  * https://unifoundry.com/unifont/index.html
