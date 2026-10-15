@@ -110,4 +110,6 @@ interface UIGraphics {
     fun rotate(degrees: Float)
     fun scale(x: Float, y: Float)
     fun popMatrix()
+
+    fun flushLayer()
 }

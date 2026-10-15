@@ -96,7 +96,7 @@ class BatchedUIGraphics(private val layer: BatchedGuiRenderer.DrawLayer) : AWTBa
             })
         } else if (font is SmoothFontReference) {
             font.awtRenderer = this.awtRenderer
-            font.draw(this.matrixStack, text, x, y, color, dropShadow, guiScale.toFloat())
+            font.draw(this.matrixStack, text, x, y + (font.lineHeight / 2f + 2), color, dropShadow, guiScale.toFloat())
         }
     }
 

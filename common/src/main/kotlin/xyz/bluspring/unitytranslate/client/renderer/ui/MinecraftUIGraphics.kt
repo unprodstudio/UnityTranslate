@@ -78,7 +78,7 @@ class MinecraftUIGraphics(private val graphics: GuiGraphicsExtractor) : AWTBacke
             graphics.text(font.font, text.asMinecraft(), x.toInt(), y.toInt(), color, dropShadow)
         } else if (font is SmoothFontReference) {
             font.awtRenderer = this.awtRenderer
-            font.draw(graphics.pose(), text, x, y, color, dropShadow, guiScale.toFloat())
+            font.draw(graphics.pose(), text, x, y + (font.lineHeight / 2f + 2), color, dropShadow, guiScale.toFloat())
         }
     }
 

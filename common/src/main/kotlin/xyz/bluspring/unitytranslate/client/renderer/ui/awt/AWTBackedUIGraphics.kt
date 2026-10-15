@@ -19,4 +19,10 @@ abstract class AWTBackedUIGraphics : UIGraphics {
     override fun roundedOutline(x1: Float, y1: Float, x2: Float, y2: Float, radius: Float, thickness: Float, matrix: ColorMatrix) {
         this.awtRenderer.peek().addDrawCall(RoundedRectangleOutlineDrawCall(Matrix3x2f(this.peekMatrix()), radius, thickness, x1, y1, x2, y2, matrix))
     }
+
+    override fun flushLayer() {
+        val lastLayer = this.awtRenderer.peek()
+        this.awtRenderer.flushLayer(this)
+        this.awtRenderer.pushLayer(lastLayer.x, lastLayer.y, lastLayer.width, lastLayer.height, lastLayer.matrix)
+    }
 }

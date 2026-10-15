@@ -204,12 +204,13 @@ class DropdownList<E : Comparable<E>>(
             val shouldShowScroll = maxAreaHeight != elementHeight
 
             val dropdownOpenBgMatrix = ColorConfig.separateMatrix(ThemeConfig.dropdownOpenBackground)
+            graphics.flushLayer()
             graphics.fill(this.x, yStart, this.x + this.width, yStart + maxAreaHeight,
                 dropdownOpenBgMatrix.topLeft.multiplyAlpha(this.opacity), dropdownOpenBgMatrix.topRight.multiplyAlpha(this.opacity),
                 dropdownOpenBgMatrix.bottomLeft.multiplyAlpha(this.opacity), dropdownOpenBgMatrix.bottomRight.multiplyAlpha(this.opacity),
             )
 
-            graphics.enableScissor(this.x.toInt(), yStart.toInt() + 1, (this.x + this.width).toInt(), maxAreaHeight.toInt() - 2)
+            graphics.enableScissor(this.x.toInt(), yStart.toInt() + 1, this.width.toInt(), maxAreaHeight.toInt() - 2)
             graphics.pushMatrix()
             graphics.translate(0f, this.scrollOffset.toFloat())
 
@@ -237,15 +238,10 @@ class DropdownList<E : Comparable<E>>(
 
                     val textWidth = font.width(text)
                     if (textWidth > maxWidth) {
-                        graphics.enableScissor(this.x.toInt() + 4, y.toInt(), maxWidth, this.height.toInt())
                         graphics.translate(Math.lerp((this.currentTick + (partialTick * (if (this.isReversing) -1f else 1f))) / this.maxScrollTick.toFloat(), 0f, (maxWidth - textWidth).toFloat()), 0f)
                     }
 
                     graphics.text(this.font, text, this.x + 4, y + 4f, colorWithHover.multiplyAlpha(this.opacity), true)
-
-                    if (textWidth > maxWidth) {
-                        graphics.disableScissor()
-                    }
 
                     graphics.popMatrix()
 
