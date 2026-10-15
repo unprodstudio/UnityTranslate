@@ -205,25 +205,7 @@ class LangSelectIntroSequence(parent: FirstStartupScreen) : IntroSequence(parent
                             currentTranscriber.checkLanguageSupport(language).isSupported
                         }
                     }
-                ) { language ->
-                    if (language != null) {
-                        val supportLevel = runBlocking { currentTranscriber.checkLanguageSupport(language) }
-
-                        when (supportLevel) {
-                            Language.SupportLevel.NONE -> TextComponent.translatable(
-                                "config.unitytranslate.language.error.transcriber.unsupported",
-                                TextComponent.translatable("unitytranslate.transcriber.${this.currentTranscriberId}.name")
-                            ).withStyle(ChatFormatting.RED)
-
-                            Language.SupportLevel.PARTIAL -> TextComponent.translatable(
-                                "config.unitytranslate.language.warn.transcriber.partial_support",
-                                TextComponent.translatable("unitytranslate.transcriber.${this.currentTranscriberId}.name")
-                            ).withStyle(ChatFormatting.GOLD)
-
-                            else -> TextComponent.empty()
-                        }
-                    } else TextComponent.empty()
-                })
+                ))
             }
         }
 
