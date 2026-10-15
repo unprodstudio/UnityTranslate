@@ -150,7 +150,7 @@ class TranscriptBoxContainer(var holder: TranscriptHolder, val config: Transcrip
         graphics.popMatrix()
 
         // Header
-        graphics.text(font, headerText, this.headerX, this.headerY + font.lineHeight, -1, this.config.header.hasShadow)
+        graphics.text(font, headerText, this.headerX, this.headerY + font.lineHeight - 2, -1, this.config.header.hasShadow)
 
         graphics.enableScissor(0, font.lineHeight + 2, this.width.toInt(), this.height.toInt() - 7)
         graphics.pushMatrix()

@@ -15,7 +15,7 @@ import net.minecraft.network.chat.Style as MCStyle
 object PlatformConversion {
     fun Style.asMinecraft(): MCStyle = buildOrCached {
         return MCStyle.EMPTY
-            .withColor(this.color ?: -1)
+            .let { if (color != null) it.withColor(color!!) else it }
             .withShadowColor(this.shadow ?: 0)
             .withBold(this.bold)
             .withItalic(this.italic)
