@@ -289,7 +289,7 @@ class DropdownList<E : Comparable<E>>(
         val maxAreaHeight = elementHeight.coerceAtMost(usableScreenHeight - 4)
 
         if (this.isOpened && mouseX >= this.x && mouseX <= this.x + this.width && mouseY >= this.y + height + 2 && mouseY <= this.y + this.height + 2 + maxAreaHeight) {
-            this.scrollOffset = Math.clamp(scrollOffset + (scrollY * 5.0), (-elementHeight + maxAreaHeight).toDouble(), 0.0)
+            this.scrollOffset = Math.clamp((-elementHeight + maxAreaHeight).toDouble(), 0.0, scrollOffset + (scrollY * 9.0))
             return true
         }
 
@@ -309,7 +309,7 @@ class DropdownList<E : Comparable<E>>(
             if (mouseX >= this.x && mouseX <= this.x + this.width && mouseY >= this.y + height + 2 && mouseY <= this.y + this.height + 2 + maxAreaHeight) {
                 val mouseY = mouseY - this.scrollOffset.toFloat()
                 val yOffset = mouseY - (this.y + height + 2)
-                val index = Math.clamp(((yOffset / elementHeight * elements.size)).toInt(), 0, elements.lastIndex)
+                val index = Math.clamp(0, elements.lastIndex, ((yOffset / elementHeight * elements.size)).toInt())
 
                 val isDisabled = !this.validator(elements[index])
 
@@ -359,7 +359,7 @@ class DropdownList<E : Comparable<E>>(
                     // FIXME: balloon languages hate this for some reason.
                     val yPos = this.y + this.height + 2 + (this.currentIndex * this.height)
                     if (yPos !in topVisibleArea..bottomVisibleArea) {
-                        this.scrollOffset = Math.clamp((maxAreaHeight - yPos).toDouble(), (-elementHeight + maxAreaHeight).toDouble(), 0.0)
+                        this.scrollOffset = Math.clamp((-elementHeight + maxAreaHeight).toDouble(), 0.0, (maxAreaHeight - yPos).toDouble())
                     }
 
                     return true
@@ -374,7 +374,7 @@ class DropdownList<E : Comparable<E>>(
                     // key down moving the scroll box
                     val yPos = this.y + this.height + 2 + (this.currentIndex * this.height) + this.height
                     if (yPos !in topVisibleArea..bottomVisibleArea) {
-                        this.scrollOffset = Math.clamp((maxAreaHeight - yPos + maxAreaHeight).toDouble(), (-elementHeight + maxAreaHeight).toDouble(), 0.0)
+                        this.scrollOffset = Math.clamp((-elementHeight + maxAreaHeight).toDouble(), 0.0, (maxAreaHeight - yPos + maxAreaHeight).toDouble())
                     }
 
                     return true
