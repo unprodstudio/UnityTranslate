@@ -1,0 +1,20 @@
+the language codes listed in the JSON are automated entirely based on what the translators themselves provided.
+some translators use non-standard codes, unfortunately.
+
+most of my names are sourced from this website - https://localizely.com/language-code/en/
+if that website didn't give it, it was given by Google, usually with the query "en language code native name" for example. no i didn't prompt an LLM to find all this shit,
+i'd rather do this shit by hand or write my own script for it than defer any of my work to that, so at least there's *some* quality control, even if there's very little of it.
+however, I doubt that they're all accurate, but I'm not a linguist or a professional, so I don't actually know what the real names would be.
+
+main things that I'm aware of:
+- fil and tl are "basically" the same, but I don't actually know which translator is bundling fil, so I should just pray that tl is automatically handled.
+- zh-Hans and zh-Hant + zh and zt are equivalent (as in zh-Hans == zh), that is handled by LibreTranslate (and by association, UnityTranslateLib), I have it mapped directly over there.
+- I'm not sure if ay should be formatted "Aymar", "Aymar aru" or "Aymar Aru". aru seems to just mean language, but I'm not sure if that needs to be part of the language name itself?
+- there are a bunch of "inconsistencies" in the naming, but I'm not sure if they should be resolved. for example, gd is "Scottish Gaelic", but I'm not sure if that should be formatted "Gaelic (Scotland)",
+  or if that should be exclusive to region-coded languages.
+- there are a lot of languages where it wasn't very clear which writing script it used, so I usually picked at random and hoped for the best.
+- I'm not sure what's the difference between mn and mn-Cyrl, considering Mongolian itself is already in Cyrillic..?
+- we support Klingon. i don't know why. i don't know who provides it. but apparently we support Klingon. in *both* forms. god knows if we even have the font for it. does Unifont provide it???
+
+also, in theory, any texts *not* covered by the selected language file should just fall back to en_us, assuming that's how Minecraft itself works. maybe I should open a Crowdin or something for this.
+but that also means that the native names should just be fine. if the native name doesn't exist, it will try to fall back to Java instead.
