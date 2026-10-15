@@ -199,12 +199,7 @@ class LangSelectIntroSequence(parent: FirstStartupScreen) : IntroSequence(parent
                 this.addChild(
                     DropdownList(
                     xPos, yPos + offset, elementWidth, elementHeight, font, languages, visualizer,
-                    langHolder::languageOrNull, DropdownList.Type.DEFAULTED,
-                    { language ->
-                        runBlocking {
-                            currentTranscriber.checkLanguageSupport(language).isSupported
-                        }
-                    }
+                    langHolder::languageOrNull, DropdownList.Type.DEFAULTED
                 ))
             }
         }
