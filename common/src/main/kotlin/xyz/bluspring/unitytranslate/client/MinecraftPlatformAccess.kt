@@ -9,4 +9,12 @@ object MinecraftPlatformAccess : PlatformAccess {
 
     override fun translated(key: String, fallback: String): String
         = Language.getInstance().getOrDefault(key, fallback)
+
+    override fun translated(key: String, fallback: () -> String): String {
+        val language = Language.getInstance()
+        return if (language.has(key))
+            language.getOrDefault(key)
+        else
+            fallback()
+    }
 }

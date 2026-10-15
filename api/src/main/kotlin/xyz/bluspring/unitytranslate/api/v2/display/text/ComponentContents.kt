@@ -40,10 +40,9 @@ sealed interface ComponentContents {
 
         private fun decomposed(style: Style = Style.EMPTY): List<TextComponent> {
             val texts = mutableListOf<TextComponent>()
-            val translated = if (this.fallback.isPresent)
-                UnityTranslateApi.instance.platform.translated(this.key, this.fallback.orElseThrow())
-            else
-                UnityTranslateApi.instance.platform.translated(this.key)
+            val translated = UnityTranslateApi.instance.platform.translated(this.key) {
+                this.fallback.orElse(this.key)!!
+            }
             val replacements = args.map { arg ->
                 if (arg is TextComponent) {
                     if (arg.contents is Translatable) {

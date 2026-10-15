@@ -44,19 +44,27 @@ data class Language @JvmOverloads constructor(
             ?: this.formatted
 
     val nativeText: String
-        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.native", this.fallbackNativeName
-            ?: this.localeBasedNativeText)
+        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.native") {
+            this.fallbackNativeName
+                ?: this.localeBasedNativeText
+        }
     val nativeShortText: String
-        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.native.short", this.fallbackNativeName
-            ?: this.locale?.let { it.getDisplayName(it) }
-            ?: this.nativeText)
+        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.native.short") {
+            this.fallbackNativeName
+                ?: this.locale?.let { it.getDisplayName(it) }
+                ?: this.nativeText
+        }
     val localizedText: String
-        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.localized", this.fallbackLocalizedName
-            ?: this.localeBasedLocalizedText)
+        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.localized") {
+            this.fallbackLocalizedName
+                ?: this.localeBasedLocalizedText
+        }
     val localizedShortText: String
-        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.localized.short", this.fallbackLocalizedName
-            ?: this.locale?.getDisplayName(findValidLocale(UnityTranslateApi.instance.client.activeLanguageCode))
-            ?: this.localizedText)
+        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.localized.short") {
+            this.fallbackLocalizedName
+                ?: this.locale?.getDisplayName(findValidLocale(UnityTranslateApi.instance.client.activeLanguageCode))
+                ?: this.localizedText
+        }
 
     val asBCP47: String
         get() {
