@@ -144,7 +144,13 @@ class SmoothFontReference(stream: InputStream, val fontSize: Float) : FontRefere
             Font.decode("Liberation Sans"),
             Font.decode("DejaVu Sans"),
             Font.decode("Noto Sans"),
+            Font.decode("FreeSans"),
             Font.decode("Serif"),
+            Font.decode("Dialog"),
+
+            // if we ever reach all the way down here, our font selection clearly does not cover much at all, and we needed to have a fallback that did cover it.
+            // this does however mean that it also looks like complete ass.
+            Font.createFont(Font.PLAIN, SmoothFontReference::class.java.getResourceAsStream("/assets/unitytranslate/font/unifont.ttf")!!),
         ).toTypedArray()
 
         fun Font.orElseFallback(c: Char): Font {
