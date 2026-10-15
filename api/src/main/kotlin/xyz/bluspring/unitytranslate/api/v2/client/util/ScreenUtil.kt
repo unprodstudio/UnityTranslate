@@ -15,6 +15,9 @@ object ScreenUtil {
 
     @JvmStatic
     fun union(vararg rectangles: ScreenRectangle): ScreenRectangle {
+        if (rectangles.isEmpty())
+            return ScreenRectangle.EMPTY
+
         val first = rectangles.first()
         var left = first.left
         var top = first.top
