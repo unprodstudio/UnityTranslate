@@ -32,13 +32,16 @@ class LangSelectIntroSequence(parent: FirstStartupScreen) : IntroSequence(parent
 
         val currentTranscriber = UnityTranslateApi.instance.getTranscriber(this.currentTranscriberId)
 
-        val visualizer: (Language) -> TextComponent = { language ->
-            val supportLevel = runBlocking { currentTranscriber.checkLanguageSupport(language) }
-
+        val regularVisualizer: (Language) -> TextComponent = { language ->
             TextComponent.translatable("unitytranslate.language.native_and_localized",
                 TextComponent.translatableWithFallback("unitytranslate.language.${language.serialized}.native", { language.localeBasedNativeText }),
                 TextComponent.translatableWithFallback("unitytranslate.language.${language.serialized}.localized", { language.localeBasedLocalizedText })
             )
+        }
+        val visualizer: (Language) -> TextComponent = { language ->
+            val supportLevel = runBlocking { currentTranscriber.checkLanguageSupport(language) }
+
+            regularVisualizer(language).copy()
                 .withColor(
                     when (supportLevel) {
                         Language.SupportLevel.PARTIAL -> ThemeConfig.warningText
@@ -198,7 +201,7 @@ class LangSelectIntroSequence(parent: FirstStartupScreen) : IntroSequence(parent
                 )
                 this.addChild(
                     DropdownList(
-                    xPos, yPos + offset, elementWidth, elementHeight, font, languages, visualizer,
+                    xPos, yPos + offset, elementWidth, elementHeight, font, languages, regularVisualizer,
                     langHolder::languageOrNull, DropdownList.Type.DEFAULTED
                 ))
             }
