@@ -18,7 +18,7 @@ interface FontReference {
 
     companion object {
         @JvmStatic @ApiStatus.Experimental
-        fun minecraft(font: Font): FontReference = Class.forName("xyz.bluspring.unitytranslate.client.renderer.ui.font.SmoothFontReference")
+        fun minecraft(font: Font): FontReference = Class.forName("xyz.bluspring.unitytranslate.client.renderer.ui.font.MinecraftFontReference")
             .getConstructor(Font::class.java)
             .newInstance(font) as FontReference
 
