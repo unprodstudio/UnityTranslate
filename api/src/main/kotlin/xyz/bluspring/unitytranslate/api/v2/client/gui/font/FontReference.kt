@@ -3,8 +3,6 @@ package xyz.bluspring.unitytranslate.api.v2.client.gui.font
 import net.minecraft.client.gui.Font
 import org.jetbrains.annotations.ApiStatus
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
-import xyz.bluspring.unitytranslate.client.renderer.ui.font.MinecraftFontReference
-import xyz.bluspring.unitytranslate.client.renderer.ui.font.SmoothFontReference
 import java.io.InputStream
 
 /**
@@ -20,9 +18,13 @@ interface FontReference {
 
     companion object {
         @JvmStatic @ApiStatus.Experimental
-        fun minecraft(font: Font): FontReference = MinecraftFontReference(font) as FontReference
+        fun minecraft(font: Font): FontReference = Class.forName("xyz.bluspring.unitytranslate.client.renderer.ui.font.SmoothFontReference")
+            .getConstructor(Font::class.java)
+            .newInstance(font) as FontReference
 
         @JvmStatic
-        fun smooth(fontStream: InputStream, size: Float): FontReference = SmoothFontReference(fontStream, size) as FontReference
+        fun smooth(fontStream: InputStream, size: Float): FontReference = Class.forName("xyz.bluspring.unitytranslate.client.renderer.ui.font.SmoothFontReference")
+            .getConstructor(InputStream::class.java, Float::class.java)
+            .newInstance(fontStream, size) as FontReference
     }
 }
