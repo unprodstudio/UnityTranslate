@@ -182,7 +182,7 @@ class DropdownList<E : Comparable<E>>(
     private fun ellipsize(text: TextComponent, maxWidth: Int): TextComponent {
         val subbed = this.font.substr(text, maxWidth)
 
-        return if (subbed != text)
+        return if (subbed.string != text.string)
             TextComponent.literal("${subbed.string}...")
         else
             text
@@ -238,7 +238,7 @@ class DropdownList<E : Comparable<E>>(
 
                     val textWidth = font.width(text)
                     if (textWidth > maxWidth) {
-                        graphics.translate(Math.lerp((this.currentTick + (partialTick * (if (this.isReversing) -1f else 1f))) / this.maxScrollTick.toFloat(), 0f, (maxWidth - textWidth).toFloat()), 0f)
+                        graphics.translate(-Math.lerp((this.currentTick + (partialTick * (if (this.isReversing) -1f else 1f))) / this.maxScrollTick.toFloat(), 0f, (maxWidth - textWidth).toFloat()), 0f)
                     }
 
                     graphics.text(this.font, text, this.x + 4, y + 4f, colorWithHover.multiplyAlpha(this.opacity), true)
