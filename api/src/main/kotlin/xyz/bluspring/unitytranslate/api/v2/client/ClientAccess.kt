@@ -24,6 +24,11 @@ interface ClientAccess {
     fun translate(value: Int): InputValue?
 
     /**
+     * Represents the active language code being used for display in UIs.
+     */
+    val activeLanguageCode: String
+
+    /**
      * Represents the width of the viewport, which is the window width divided by the GUI scale.
      */
     val viewportWidth: Int

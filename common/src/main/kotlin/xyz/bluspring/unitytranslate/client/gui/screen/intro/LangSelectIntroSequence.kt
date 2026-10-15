@@ -36,8 +36,8 @@ class LangSelectIntroSequence(parent: FirstStartupScreen) : IntroSequence(parent
             val supportLevel = runBlocking { currentTranscriber.checkLanguageSupport(language) }
 
             TextComponent.translatable("unitytranslate.language.native_and_localized",
-                TextComponent.translatableWithFallback("unitytranslate.language.${language.serialized}.native", language.formatted),
-                TextComponent.translatableWithFallback("unitytranslate.language.${language.serialized}.localized", language.formatted)
+                TextComponent.translatableWithFallback("unitytranslate.language.${language.serialized}.native", { language.localeBasedNativeText }),
+                TextComponent.translatableWithFallback("unitytranslate.language.${language.serialized}.localized", { language.localeBasedLocalizedText })
             )
                 .withColor(
                     when (supportLevel) {

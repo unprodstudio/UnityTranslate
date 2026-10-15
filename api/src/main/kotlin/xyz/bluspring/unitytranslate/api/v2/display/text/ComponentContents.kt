@@ -30,8 +30,13 @@ sealed interface ComponentContents {
         }
     }
 
-    data class Translatable @JvmOverloads constructor(val key: String, val args: List<Any?>, val fallback: Optional<String> = Optional.empty()) : ComponentContents {
+    @JvmRecord
+    data class Translatable @JvmOverloads constructor(val key: String, val args: List<Any?>, val fallbackGetter: () -> Optional<String> = Optional<String>::empty) : ComponentContents {
+        constructor(key: String, args: List<Any?>, fallback: Optional<String>) : this(key, args, { fallback })
         constructor(key: String, args: List<Any?>, fallback: String) : this(key, args, Optional.of(fallback))
+
+        val fallback: Optional<String>
+            get() = this.fallbackGetter()
 
         private fun decomposed(style: Style = Style.EMPTY): List<TextComponent> {
             val texts = mutableListOf<TextComponent>()

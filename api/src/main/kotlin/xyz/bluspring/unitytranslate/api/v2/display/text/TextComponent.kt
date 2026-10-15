@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import xyz.bluspring.unitytranslate.api.v2.display.text.ComponentUtils.join
 import xyz.bluspring.unitytranslate.api.v2.util.AdditionalCodecs.withAlternativeUT
+import java.util.*
 
 /**
  * A variation of text components for UnityTranslate's own usage.
@@ -79,6 +80,7 @@ interface TextComponent {
         @JvmStatic fun literal(text: String): MutableTextComponent = MutableTextComponent(ComponentContents.Literal(text))
         @JvmStatic fun translatable(key: String, vararg args: Any?): MutableTextComponent = MutableTextComponent(ComponentContents.Translatable(key, args.toList()))
         @JvmStatic fun translatableWithFallback(key: String, fallback: String, vararg args: Any?): MutableTextComponent = MutableTextComponent(ComponentContents.Translatable(key, args.toList(), fallback))
+        @JvmStatic fun translatableWithFallback(key: String, fallback: () -> String, vararg args: Any?): MutableTextComponent = MutableTextComponent(ComponentContents.Translatable(key, args.toList()) { Optional.of(fallback()) })
 
         @JvmField
         val SIMPLE_CODEC: Codec<TextComponent> = Codec.STRING.xmap({ literal(it) }, TextComponent::string)

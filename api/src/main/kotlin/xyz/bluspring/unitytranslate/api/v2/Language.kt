@@ -1,8 +1,12 @@
 package xyz.bluspring.unitytranslate.api.v2
 
+import com.google.common.cache.CacheBuilder
 import com.mojang.serialization.Codec
 import xyz.bluspring.modernnetworking.api.v2.codec.NetworkCodecs
 import xyz.bluspring.unitytranslate.api.v2.util.reverse
+import java.util.*
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.toJavaDuration
 
 @JvmRecord
 data class Language @JvmOverloads constructor(
@@ -11,6 +15,14 @@ data class Language @JvmOverloads constructor(
     val fallbackNativeName: String? = null,
     val fallbackLocalizedName: String? = null,
 ) : Comparable<Language> {
+    val locale: Locale?
+        get() = localeCache.get(this) { Locale(this.languageCode) }
+            .let { if (availableLocales.contains(it)) it else null }
+
+    val fullLocale: Locale?
+        get() = fullLocaleCache.get(this) { Locale.forLanguageTag(this.asBCP47) }
+            .let { if (availableLocales.contains(it)) it else null }
+
     val formatted: String
         get() = if (this.regionCode == null)
             this.languageCode
@@ -23,14 +35,28 @@ data class Language @JvmOverloads constructor(
         else
             "${this.languageCode}_${this.regionCode.lowercase()}"
 
+    val localeBasedNativeText: String
+        get() = this.fullLocale?.let { it.getDisplayName(it) }
+            ?: this.formatted
+
+    val localeBasedLocalizedText: String
+        get() = this.fullLocale?.getDisplayName(findValidLocale(UnityTranslateApi.instance.client.activeLanguageCode))
+            ?: this.formatted
+
     val nativeText: String
-        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.native", this.fallbackNativeName ?: this.formatted)
+        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.native", this.fallbackNativeName
+            ?: this.localeBasedNativeText)
     val nativeShortText: String
-        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.native.short", this.fallbackNativeName ?: this.nativeText)
+        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.native.short", this.fallbackNativeName
+            ?: this.locale?.let { it.getDisplayName(it) }
+            ?: this.nativeText)
     val localizedText: String
-        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.localized", this.fallbackLocalizedName ?: this.formatted)
+        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.localized", this.fallbackLocalizedName
+            ?: this.localeBasedLocalizedText)
     val localizedShortText: String
-        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.localized.short", this.fallbackLocalizedName ?: this.nativeText)
+        get() = UnityTranslateApi.instance.platform.translated("unitytranslate.language.$serialized.localized.short", this.fallbackLocalizedName
+            ?: this.locale?.getDisplayName(findValidLocale(UnityTranslateApi.instance.client.activeLanguageCode))
+            ?: this.localizedText)
 
     val asBCP47: String
         get() {
@@ -71,6 +97,35 @@ data class Language @JvmOverloads constructor(
     companion object {
         @JvmField val CODEC: Codec<Language> = Codec.STRING.xmap(Language::parse, Language::formatted)
         @JvmField val NETWORK_CODEC = NetworkCodecs.STRING_UTF8.xmap(Language::parse, Language::formatted)
+
+        private val localeCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(5.minutes.toJavaDuration())
+            .weakKeys()
+            .build<Language, Locale>()
+
+        private val fullLocaleCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(5.minutes.toJavaDuration())
+            .weakKeys()
+            .build<Language, Locale>()
+
+        private val availableLocales = Locale.getAvailableLocales()
+
+        private fun findValidLocale(code: String): Locale {
+            var locale = Locale.forLanguageTag(code)
+
+            if (availableLocales.contains(locale))
+                // oh, nice, it's valid
+                return locale
+
+            // fuck, okay, need to find the right locale then.
+            locale = Locale(locale.language)
+
+            if (availableLocales.contains(locale))
+                return locale
+
+            // worst case scenario, let's just use the US locale, since it's always supposed to exist. key word: supposed.
+            return Locale.US
+        }
 
         @JvmStatic fun codecWithAliasing(aliases: Map<Language, String>): Codec<Language> {
             val reverseLookup = aliases.reverse()

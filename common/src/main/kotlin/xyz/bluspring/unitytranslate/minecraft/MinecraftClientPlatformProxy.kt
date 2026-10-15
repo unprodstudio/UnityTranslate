@@ -57,4 +57,6 @@ abstract class MinecraftClientPlatformProxy : Blaze3DClientPlatformProxy() {
         get() = Minecraft.getInstance().window.guiScaledHeight
     override val guiScale: Double
         get() = Minecraft.getInstance().window.guiScale.toDouble()
+    override val activeLanguageCode: String
+        get() = Minecraft.getInstance().languageManager.selected
 }
