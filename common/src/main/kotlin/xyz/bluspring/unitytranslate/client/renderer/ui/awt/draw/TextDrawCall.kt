@@ -92,7 +92,7 @@ data class TextDrawCall(val font: SmoothFontReference, override val matrix: Matr
             val shadowCopy = AttributedString(attributedText.iterator)
             val indices = colorMap.keys.sorted()
             for ((startIndex, color) in colorMap) {
-                val shadowColor = Color(ARGBHelper.multiply(color, ARGBHelper.colorFromFloat(1f, 0.2f, 0.2f, 0.2f)))
+                val shadowColor = Color(ARGBHelper.multiply(color, ARGBHelper.colorFromFloat(1f, 0.2f, 0.2f, 0.2f)), true)
                 val indexOfIndex = indices.indexOf(startIndex)
                 if (indexOfIndex < indices.lastIndex) {
                     val nextIndex = indices[indexOfIndex + 1]
@@ -103,9 +103,9 @@ data class TextDrawCall(val font: SmoothFontReference, override val matrix: Matr
             }
 
             val layout = TextLayout(shadowCopy.iterator, graphics.fontRenderContext)
-            graphics.color = Color(ARGBHelper.multiply(color, ARGBHelper.colorFromFloat(1f, 0.2f, 0.2f, 0.2f)))
+            graphics.color = Color(ARGBHelper.multiply(color, ARGBHelper.colorFromFloat(1f, 0.2f, 0.2f, 0.2f)), true)
             layout.draw(graphics, x * guiScale + guiScale, y * guiScale + guiScale)
-            graphics.color = Color(color)
+            graphics.color = Color(color, true)
         }
 
         val layout = TextLayout(attributedText.iterator, graphics.fontRenderContext)
