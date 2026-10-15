@@ -134,8 +134,16 @@ class DropdownList<E : Comparable<E>>(
                 this.currentIndex = 0
                 this.lastStoredIndex = 0
             } else {
-                this.currentIndex = this.elements.indexOf(value)
-                this.lastStoredIndex = this.elements.indexOf(value)
+                val index = this.elements.indexOf(value)
+
+                if (index != -1) {
+                    this.currentIndex = index
+                    this.lastStoredIndex = index
+                } else {
+                    // safeguard because i encountered a random crash
+                    this.currentIndex = 0
+                    this.lastStoredIndex = 0
+                }
             }
 
             this.isLoaded = true
