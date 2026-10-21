@@ -6,10 +6,10 @@ import xyz.bluspring.unitytranslate.api.v2.UnityTranslateApi
 import xyz.bluspring.unitytranslate.api.v2.client.gui.UIGraphics
 import xyz.bluspring.unitytranslate.api.v2.client.gui.element.PlainUIButton
 import xyz.bluspring.unitytranslate.api.v2.client.theme.ThemeConfig
+import xyz.bluspring.unitytranslate.api.v2.client.util.CommonEasing
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
 import xyz.bluspring.unitytranslate.api.v2.util.ARGBHelper.multiplyAlpha
 import xyz.bluspring.unitytranslate.api.v2.util.ARGBHelper.withAlpha
-import xyz.bluspring.unitytranslate.api.v2.util.CommonEasing
 import xyz.bluspring.unitytranslate.client.gui.LogoTransitionOverlay
 import xyz.bluspring.unitytranslate.client.gui.screen.FirstStartupScreen
 import xyz.bluspring.unitytranslate.util.PlatformConversion.withStyle

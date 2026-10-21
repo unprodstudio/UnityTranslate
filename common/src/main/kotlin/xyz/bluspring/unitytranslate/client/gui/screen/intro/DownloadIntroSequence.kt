@@ -5,9 +5,9 @@ import xyz.bluspring.unitytranslate.api.v2.client.gui.UIGraphics
 import xyz.bluspring.unitytranslate.api.v2.client.gui.element.HorizontalAlign
 import xyz.bluspring.unitytranslate.api.v2.client.gui.element.PlainUIButton
 import xyz.bluspring.unitytranslate.api.v2.client.gui.element.UILabel
+import xyz.bluspring.unitytranslate.api.v2.client.util.CommonEasing
 import xyz.bluspring.unitytranslate.api.v2.display.text.TextComponent
 import xyz.bluspring.unitytranslate.api.v2.util.ARGBHelper.withAlpha
-import xyz.bluspring.unitytranslate.api.v2.util.CommonEasing
 import xyz.bluspring.unitytranslate.client.ClientPlatformProxy
 import xyz.bluspring.unitytranslate.client.gui.LogoTransitionOverlay
 import xyz.bluspring.unitytranslate.client.gui.screen.FirstStartupScreen

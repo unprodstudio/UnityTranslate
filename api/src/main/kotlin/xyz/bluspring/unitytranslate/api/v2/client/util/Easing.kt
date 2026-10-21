@@ -1,4 +1,4 @@
-package xyz.bluspring.unitytranslate.api.v2.util
+package xyz.bluspring.unitytranslate.api.v2.client.util
 
 import kotlin.math.pow
 

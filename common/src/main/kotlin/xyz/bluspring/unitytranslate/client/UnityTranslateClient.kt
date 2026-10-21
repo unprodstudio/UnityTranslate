@@ -144,6 +144,10 @@ object UnityTranslateClient {
                 listValue("self_translating", Language.CODEC, ClientConfig::selfTranslating)
             }
 
+            category("accessibility") {
+                boolean("enable_animations", ClientConfig::enableAnimations)
+            }
+
             if (this is SunsetWrappedConfigBuilder) {
                 this.wrapped.custom(HiddenReflectingConfigValue("handled_first_join", Codec.BOOL, UnityTranslateClient::handledFirstJoin))
             }

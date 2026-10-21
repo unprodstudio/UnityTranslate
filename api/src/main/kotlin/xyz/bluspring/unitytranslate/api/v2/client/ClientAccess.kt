@@ -2,6 +2,7 @@ package xyz.bluspring.unitytranslate.api.v2.client
 
 import xyz.bluspring.unitytranslate.api.v2.client.gui.font.FontReference
 import xyz.bluspring.unitytranslate.api.v2.client.gui.screen.UTScreen
+import xyz.bluspring.unitytranslate.api.v2.client.util.CommonEasing
 
 interface ClientAccess {
     val guiScale: Double
@@ -41,4 +42,10 @@ interface ClientAccess {
      * Gets the default font used in this instance of UnityTranslate.
      */
     val defaultFont: FontReference
+
+    /**
+     * Used to detect whether animations should be played. Used for accessibility.
+     * [CommonEasing.getValue] will always abide by this option.
+     */
+    val shouldAnimate: Boolean
 }

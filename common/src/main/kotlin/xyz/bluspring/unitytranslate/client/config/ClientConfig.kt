@@ -11,5 +11,7 @@ object ClientConfig {
     var transcriber: SpeechTranscriber = InactiveTranscriber
     var transcriptionInterval: Int = 250
 
+    var enableAnimations = true
+
     var wereBoxesUpdated = false
 }

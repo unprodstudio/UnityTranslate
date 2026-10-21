@@ -1,5 +1,6 @@
-package xyz.bluspring.unitytranslate.api.v2.util
+package xyz.bluspring.unitytranslate.api.v2.client.util
 
+import xyz.bluspring.unitytranslate.api.v2.UnityTranslateApi
 import kotlin.math.pow
 import kotlin.math.sin
 
@@ -99,5 +100,15 @@ enum class CommonEasing(private val easing: Easing) : Easing {
     EASE_IN_OUT_QUINTIC(Easing.polynomialEaseInOut(5)),
     ;
 
-    override fun getValue(t: Float): Float = this.easing.getValue(t)
+    override fun getValue(t: Float): Float {
+        if (!UnityTranslateApi.instance.client.shouldAnimate)
+            return 1f
+
+        return this.getValueUnsafe(t)
+    }
+
+    /**
+     * A version of [getValue] that calls directly rather than handling a check that ensures for disabled animations.
+     */
+    fun getValueUnsafe(t: Float): Float = this.easing.getValue(t)
 }
