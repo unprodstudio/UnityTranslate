@@ -295,29 +295,32 @@ class TranscriptBoxConfig(
                 var targetHeight: Float,
             ) : Size("anchored") {
                 override fun calculateDimensions(screenWidth: Int, screenHeight: Int): Vector2f {
-                    val expectedWidth = this.expectedWidth * screenWidth
-                    val expectedHeight = this.expectedHeight * screenHeight
+                    val expectedWidth = this.expectedWidth * screenWidth.toFloat()
+                    val expectedHeight = this.expectedHeight * screenHeight.toFloat()
                     val aspectRatio = this.targetWidth / this.targetHeight
 
                     val actualWidth = if (expectedWidth >= this.targetWidth && expectedHeight >= this.targetHeight)
                         this.targetWidth
-                    else if (expectedHeight >= this.targetHeight)
-                        this.targetHeight * aspectRatio
                     else if (expectedWidth >= this.targetWidth)
                         this.targetWidth
+                    else if (expectedHeight >= this.targetHeight)
+                        this.targetHeight * aspectRatio
                     else
-                        expectedWidth * (1f / aspectRatio)
+                        expectedWidth
 
-                    val actualHeight = if (expectedHeight >= this.targetHeight && expectedHeight >= this.targetHeight)
+                    val actualHeight = if (expectedHeight >= this.targetHeight && expectedWidth >= this.targetWidth)
                         this.targetHeight
                     else if (expectedHeight >= this.targetHeight)
-                        this.targetHeight * (1f / aspectRatio)
-                    else if (expectedHeight >= this.targetHeight)
                         this.targetHeight
+                    else if (expectedWidth >= this.targetWidth)
+                        this.targetWidth * (1f / aspectRatio)
                     else
-                        expectedHeight * aspectRatio
+                        expectedHeight
 
-                    return Vector2f(actualWidth, actualHeight)
+                    val aspectCorrectedWidth = (actualHeight * this.targetWidth) / this.targetHeight
+                    val aspectCorrectedHeight = (actualWidth * this.targetHeight) / this.targetWidth
+
+                    return Vector2f(aspectCorrectedWidth, aspectCorrectedHeight)
                 }
 
                 companion object {

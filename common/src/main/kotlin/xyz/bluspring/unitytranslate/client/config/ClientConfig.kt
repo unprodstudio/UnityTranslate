@@ -10,4 +10,6 @@ object ClientConfig {
     var selfTranslating: MutableList<Language> = mutableListOf()
     var transcriber: SpeechTranscriber = InactiveTranscriber
     var transcriptionInterval: Int = 250
+
+    var wereBoxesUpdated = false
 }

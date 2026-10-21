@@ -15,10 +15,6 @@ object CacheUtils {
         } as MutableMap<T, U>
     }
 
-    init {
-        print("bruh")
-    }
-
     inline fun <reified T : Any, reified U : Any> T.buildOrCached(builder: T.() -> U): U {
         val cache = createCacheLookup(T::class.java, U::class.java)
         synchronized(cache) {

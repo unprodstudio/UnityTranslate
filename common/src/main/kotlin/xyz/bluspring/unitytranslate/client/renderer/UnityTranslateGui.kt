@@ -35,6 +35,11 @@ object UnityTranslateGui {
     private var hasInit = false
 
     fun tick() {
+        if (ClientConfig.wereBoxesUpdated) {
+            this.hasInit = false
+            ClientConfig.wereBoxesUpdated = false
+        }
+
         if (!this.hasInit) {
             this.transcriptRenderer.updateConfig(ClientConfig.transcriptBoxes)
             this.hasInit = true

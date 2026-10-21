@@ -24,6 +24,7 @@ import xyz.bluspring.unitytranslate.api.v2.transcriber.TranscriptHolder
 import xyz.bluspring.unitytranslate.api.v2.util.ARGBHelper.alpha
 import xyz.bluspring.unitytranslate.api.v2.util.ARGBHelper.multiplyAlpha
 import xyz.bluspring.unitytranslate.client.ClientPlatformProxy
+import xyz.bluspring.unitytranslate.client.config.ClientConfig
 import xyz.bluspring.unitytranslate.client.config.TranscriptBoxConfig
 import xyz.bluspring.unitytranslate.client.gui.MouseHelper
 import java.util.*
@@ -415,7 +416,12 @@ class TranscriptBoxContainer(var holder: TranscriptHolder, val config: Transcrip
 //
 //                )),
 
-            ))
+            )),
+            ActionContextBoxElement(TextComponent.translatable("unitytranslate.config.delete").withColor(ThemeConfig.dangerText)) {
+                // TODO: confirm dialog
+                ClientConfig.transcriptBoxes.remove(this.config)
+                ClientConfig.wereBoxesUpdated = true
+            },
         ))
     }
 
@@ -423,8 +429,8 @@ class TranscriptBoxContainer(var holder: TranscriptHolder, val config: Transcrip
         if (this.holder.language != this.config.language)
             this.holder = UnityTranslateApi.instance.getOrCreateTranscriptHolder(this.config.language)
 
-        val screenWidth = (ClientPlatformProxy.instance.windowWidth / ClientPlatformProxy.instance.guiScale).toInt()
-        val screenHeight = (ClientPlatformProxy.instance.windowHeight / ClientPlatformProxy.instance.guiScale).toInt()
+        val screenWidth = ClientPlatformProxy.instance.viewportWidth
+        val screenHeight = ClientPlatformProxy.instance.viewportHeight
 
         val dimensions = config.transforms.size.calculateDimensions(screenWidth, screenHeight)
         val pos = config.transforms.position.calculatePos(dimensions, screenWidth, screenHeight)

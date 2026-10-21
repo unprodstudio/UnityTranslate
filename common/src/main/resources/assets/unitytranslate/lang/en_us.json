@@ -8,6 +8,7 @@
     "unitytranslate.transcript.decoration.brackets": "[%s]",
     "unitytranslate.transcript.message": "<%1$s %2$s> %3$s",
 
+    "unitytranslate.config.delete": "Delete",
     "unitytranslate.config.loading": "Loading",
     "unitytranslate.config.empty": "(empty)",
     "unitytranslate.config.none": "(none)",

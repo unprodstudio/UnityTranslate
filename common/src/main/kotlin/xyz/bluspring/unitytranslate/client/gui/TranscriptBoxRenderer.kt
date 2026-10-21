@@ -30,7 +30,7 @@ class TranscriptBoxRenderer : UIElement() {
         val existing = this.containers.toMutableList()
 
         // Remove boxes that no longer exist
-        for (container in existing.filter { boxes.contains(it.config) }) {
+        for (container in existing.filter { !boxes.contains(it.config) }) {
             this.removeChild(container)
             existing.remove(container)
         }

@@ -10,6 +10,8 @@ object ThemeConfig {
     )
     var textColor: Int = Color(0xFFFFFF).rgb
 
+    var dangerText: Int = Color(196, 0, 0).rgb
+
     var enabledText: Int = Color(99, 255, 99).rgb
     var disabledText: Int = Color(255, 99, 99).rgb
 

@@ -52,6 +52,11 @@ class ConfigureTranscriptBoxesScreen(private val onExit: () -> Unit = { ClientPl
             this.introText.color = this.introText.color.withAlpha(1f)
         }
 
+        if (ClientConfig.wereBoxesUpdated) {
+            this.needsReinit = true
+            ClientConfig.wereBoxesUpdated = false
+        }
+
         if (this.needsReinit) {
             this.renderer.updateConfig(ClientConfig.transcriptBoxes)
             for (container in this.renderer.containers) {
