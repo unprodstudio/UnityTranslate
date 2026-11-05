@@ -1,6 +1,7 @@
 package xyz.bluspring.unitytranslate.api.v2.client
 
 import kotlin.math.floor
+import kotlin.math.sqrt
 
 /**
  * Some utilities and constants that should be used when samples are passed to UnityTranslate.
@@ -13,6 +14,8 @@ object AudioHelper {
     const val CHANNELS = 1
     const val FRAME_SIZE = 2
     const val BUFFER_SIZE = (SAMPLE_RATE / 1000) * 20
+
+    const val SPEECH_THRESHOLD = 0.02
 
     @JvmStatic
     fun ByteArray.toAudioFloatArray(): FloatArray {
@@ -27,6 +30,18 @@ object AudioHelper {
         }
 
         return floats
+    }
+
+    @JvmStatic
+    fun hasSpeech(input: FloatArray, threshold: Double): Boolean {
+        if (input.isEmpty())
+            return false
+
+        var squares = 0.0
+        for (f in input)
+            squares += f * f
+
+        return sqrt(squares / input.size) > threshold
     }
 
     @JvmStatic

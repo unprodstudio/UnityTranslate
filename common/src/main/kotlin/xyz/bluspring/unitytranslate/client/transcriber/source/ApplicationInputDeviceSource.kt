@@ -17,10 +17,12 @@ class ApplicationInputDeviceSource(private val sourceInfo: SourceInfo.Applicatio
         val array = FloatArray(floatBuffer.remaining())
         floatBuffer.get(array)
 
-        this.buffer += AudioHelper.getMonoAudio(
-            AudioHelper.downsampleAnyTo16k(array, this.sourceInfo.sampleRate),
-            this.sourceInfo.channels.toInt()
-        )
+        if (AudioHelper.hasSpeech(array, AudioHelper.SPEECH_THRESHOLD)) {
+            this.buffer += AudioHelper.getMonoAudio(
+                AudioHelper.downsampleAnyTo16k(array, this.sourceInfo.sampleRate),
+                this.sourceInfo.channels.toInt()
+            )
+        }
 
 //        if (this.tempBuffer.hasRemaining()) {
 //            if (this.tempBuffer.remaining() > array.size)
