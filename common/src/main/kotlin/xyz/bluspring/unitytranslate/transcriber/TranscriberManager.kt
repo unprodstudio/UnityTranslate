@@ -11,8 +11,9 @@ class TranscriberManager {
     private var isTranscribing = false
 
     private val scope = CoroutineScope(Executors.newSingleThreadExecutor({
-        Thread(it).apply {
+        Thread.ofVirtual().unstarted(it).apply {
             isDaemon = true
+            name = "UnityTranslate Transcriber Manager"
         }
     }).asCoroutineDispatcher()) + CoroutineName("UnityTranslate Transcriber Manager")
 
@@ -21,6 +22,10 @@ class TranscriberManager {
             this.isTranscribing = true
             this.scope.launch(start = CoroutineStart.UNDISPATCHED) {
                 try {
+                    for (source in UnityTranslateApiImpl.inputSources) {
+                        source.tick()
+                    }
+
                     processTranscriptions()
                 } catch (e: Throwable) {
                     e.printStackTrace()

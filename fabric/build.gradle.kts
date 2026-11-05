@@ -49,7 +49,10 @@ dependencies {
     moddedApi("net.fabricmc.fabric-api:fabric-api:${property("fabric_api")}")
     moddedApi(fletchingTable.modrinth("modmenu", stonecutter.current.version, "fabric"))
 
+    api(libs.application.audio.capture)
+
     shadedDep(runtimeOnly("xyz.bluspring.unitytranslate:unitytranslate-library:${libs.versions.unitytranslatelib.get()}:natives-windows-x64")!!)
+    shadedDep(runtimeOnly("xyz.bluspring.unitytranslate:application-audio-capture:${libs.versions.application.audio.capture.get()}:natives-windows-x64")!!)
 
     moddedApi("xyz.bluspring.modernnetworking:modernnetworking-fabric:${libs.versions.modernnetworking.get()}+${property("modernnetworking_mc")}")
     moddedApi("maven.modrinth:talk-balloons:${libs.versions.talk.balloons.get()}+${stonecutter.current.version}-fabric")

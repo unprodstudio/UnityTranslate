@@ -2,7 +2,10 @@ package xyz.bluspring.unitytranslate
 
 import com.mojang.serialization.MapCodec
 import xyz.bluspring.sunset.SunsetConfig
-import xyz.bluspring.unitytranslate.api.v2.*
+import xyz.bluspring.unitytranslate.api.v2.Language
+import xyz.bluspring.unitytranslate.api.v2.LanguageHolder
+import xyz.bluspring.unitytranslate.api.v2.PlatformAccess
+import xyz.bluspring.unitytranslate.api.v2.UnityTranslateApi
 import xyz.bluspring.unitytranslate.api.v2.client.ClientAccess
 import xyz.bluspring.unitytranslate.api.v2.config.ConfigBuilder
 import xyz.bluspring.unitytranslate.api.v2.display.LanguageDisplay
@@ -20,6 +23,8 @@ import xyz.bluspring.unitytranslate.api.v2.translator.TranslatorInstance
 import xyz.bluspring.unitytranslate.api.v2.translator.TranslatorManager
 import xyz.bluspring.unitytranslate.client.ClientPlatformProxy
 import xyz.bluspring.unitytranslate.client.MinecraftPlatformAccess
+import xyz.bluspring.unitytranslate.client.config.ClientConfig
+import xyz.bluspring.unitytranslate.client.transcriber.source.InputSource
 import xyz.bluspring.unitytranslate.config.builders.SunsetWrappedConfigBuilder
 import xyz.bluspring.unitytranslate.plugin.PluginManager
 import xyz.bluspring.unitytranslate.transcriber.TranscriberSourceImpl
@@ -48,10 +53,16 @@ object UnityTranslateApiImpl : UnityTranslateApi {
 
     val outputLanguages: MutableMap<String, LanguageHolder> = mutableMapOf()
 
+    val inputSources: MutableSet<InputSource> = mutableSetOf()
+
     val allConfigs: Collection<SunsetConfig>
         get() = this.translatorConfigs.values + this.translatorConfigs.values + this.configs.values
 
-    override var currentSpokenLanguage: Language = Languages.ENGLISH
+    override var currentSpokenLanguage: Language
+        get() = ClientConfig.spokenLanguage
+        set(value) {
+            ClientConfig.spokenLanguage = value
+        }
     override val translatorManager: TranslatorManager
         get() = TranslatorManagerImpl // Don't inline this! You're gonna run into a bunch of headaches otherwise.
 

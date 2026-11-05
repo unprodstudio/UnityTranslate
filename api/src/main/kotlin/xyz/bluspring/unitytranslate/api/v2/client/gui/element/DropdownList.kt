@@ -98,6 +98,9 @@ class DropdownList<E : Comparable<E>>(
 
     val selected: E?
         get() {
+            if (this.elements.isEmpty() || (this.type != Type.DEFAULTED && this.elements.getOrNull(this.currentIndex) == null))
+                return null
+
             return this.elements[this.currentIndex]
         }
 

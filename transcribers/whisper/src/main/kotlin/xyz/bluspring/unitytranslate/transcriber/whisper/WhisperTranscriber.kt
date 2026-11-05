@@ -45,6 +45,7 @@ object WhisperTranscriber : SpeechTranscriber() {
     private fun createContextThreads() = Executors.newFixedThreadPool(maxWhisperThreads) {
         Thread(it).apply {
             isDaemon = true
+            name = "UnityTranslate Whisper Context Thread"
         }
     }.asCoroutineDispatcher() + CoroutineName("UnityTranslate Whisper Transcriber")
 

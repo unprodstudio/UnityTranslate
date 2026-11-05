@@ -44,6 +44,7 @@ terminalconsoleappender = "1.3.0"
 gson = "2.14.0"
 
 unitytranslatelib = "1.0.0"
+application-audio-capture = "1.0.0"
 
 # https://modrinth.com/mod/talk-balloons/versions
 talk-balloons = "1.6.3"
@@ -109,6 +110,7 @@ datafixerupper = { module = "com.mojang:datafixerupper", version.ref = "datafixe
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 unitytranslatelib = { module = "xyz.bluspring.unitytranslate:unitytranslate-library", version.ref = "unitytranslatelib" }
+application-audio-capture = { module = "xyz.bluspring.unitytranslate:application-audio-capture", version.ref = "application-audio-capture" }
 whispercpp = { module = "io.github.ggerganov:whispercpp", version.ref = "whispercpp" }
 modernnetworking-api = { module = "xyz.bluspring.modernnetworking:modernnetworking-api", version.ref = "modernnetworking" }
 

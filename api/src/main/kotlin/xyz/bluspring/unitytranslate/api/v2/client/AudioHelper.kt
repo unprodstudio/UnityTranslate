@@ -1,5 +1,7 @@
 package xyz.bluspring.unitytranslate.api.v2.client
 
+import kotlin.math.floor
+
 /**
  * Some utilities and constants that should be used when samples are passed to UnityTranslate.
  */
@@ -25,6 +27,45 @@ object AudioHelper {
         }
 
         return floats
+    }
+
+    @JvmStatic
+    fun getMonoAudio(input: FloatArray, channels: Int): FloatArray {
+        if (channels == CHANNELS)
+            return input
+
+        val outputLength = input.size / channels
+        val output = FloatArray(outputLength)
+
+        for (i in 0 until outputLength) {
+            output[i] = input[i * channels]
+        }
+
+        return output
+    }
+
+    @JvmStatic
+    fun downsampleAnyTo16k(input: FloatArray, sampleRate: Int): FloatArray {
+        if (sampleRate == SAMPLE_RATE)
+            return input
+
+        val ratio = sampleRate.toFloat() / SAMPLE_RATE.toFloat()
+        val outputLength = floor(input.size.toFloat() / ratio).toInt()
+        val output = FloatArray(outputLength)
+
+        for (i in 0 until outputLength) {
+            val baseF = i.toFloat() * ratio
+            val base = floor(baseF).toInt()
+            val weight = baseF - base
+
+            if (base + 1 < input.size) {
+                output[i] = input[base] + weight * (input[base + 1] - input[base])
+            } else {
+                output[i] = input[base]
+            }
+        }
+
+        return output
     }
 
     @JvmStatic

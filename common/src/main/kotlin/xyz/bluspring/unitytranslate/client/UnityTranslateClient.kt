@@ -135,7 +135,7 @@ object UnityTranslateClient {
             }
 
             category("languages") {
-                string("spoken", ClientConfig::spokenLanguage)
+                value("spoken", Language.CODEC, ClientConfig::spokenLanguage)
 
                 for ((langKey, langHolder) in UnityTranslateApiImpl.outputLanguages) {
                     value(langKey, Language.CODEC, langHolder::language)
@@ -203,6 +203,16 @@ object UnityTranslateClient {
                 }
             }
         }
+
+        // for testing purposes, pls remove later
+//        run {
+//            val applicationSource = ApplicationSource("Thorium (RESAMOKAS)")
+//            val transcriberSource = UnityTranslateApi.instance.getOrCreateTranscriberSource(applicationSource)
+//            val sourceInfo = ApplicationInputDeviceSource.listSources().first { it.name == "thorium" }
+//            val inputSource = ApplicationInputDeviceSource(sourceInfo, transcriberSource)
+//
+//            UnityTranslateApiImpl.inputSources.add(inputSource)
+//        }
     }
 
     fun onJoinServer() {
