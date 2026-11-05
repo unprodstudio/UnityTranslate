@@ -106,6 +106,9 @@ sealed interface DownloadInfo {
 
         override var hasStarted: Boolean = false
 
+        override val isComplete: Boolean
+            get() = ::deferred.isInitialized && super.isComplete
+
         override val onStartDownload: Event<Runnable> = Event(Runnable::class.java) { values ->
             Runnable {
                 for (runnable in values) {
