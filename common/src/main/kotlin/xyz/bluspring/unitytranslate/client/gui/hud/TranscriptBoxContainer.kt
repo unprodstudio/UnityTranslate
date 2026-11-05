@@ -386,7 +386,7 @@ class TranscriptBoxContainer(var holder: TranscriptHolder, val config: Transcrip
         UnityTranslateApiImpl.translators.values.flatMap { it.getSupportedLanguages() }.distinct()
     }
 
-    fun createContextBox(x: Float, y: Float): ContextBox {
+    fun createContextBox(x: Float, y: Float, closer: () -> Unit): ContextBox {
         val languages = runBlocking {
             languages()
         }
@@ -421,6 +421,7 @@ class TranscriptBoxContainer(var holder: TranscriptHolder, val config: Transcrip
                 // TODO: confirm dialog
                 ClientConfig.transcriptBoxes.remove(this.config)
                 ClientConfig.wereBoxesUpdated = true
+                closer()
             },
         ))
     }

@@ -66,13 +66,19 @@ class SliderElement<T : Number>(
         val normalized = this.normalizedValue
 
         val trackMatrix = ColorConfig.separateMatrix(if (isFocused) ThemeConfig.sliderTrackFocused else ThemeConfig.sliderTrack)
-        graphics.fill(this.x, this.y + (this.height / 2f), this.x + this.width, this.y + (this.height / 2f) + 1,
+        val trackFillMatrix = ColorConfig.separateMatrix(ThemeConfig.sliderTrackFocused)
+        graphics.outline(this.x, this.y + 3, this.x + this.width, this.y + this.height - 3, 1f,
             trackMatrix.topLeft.multiplyAlpha(this.opacity), trackMatrix.topRight.multiplyAlpha(this.opacity),
             trackMatrix.bottomLeft.multiplyAlpha(this.opacity), trackMatrix.bottomRight.multiplyAlpha(this.opacity)
         )
 
+        graphics.fill(this.x + 2, this.y + 3 + 2, this.x + ((this.width - 1) * normalized), this.y + this.height - 3 - 2,
+            trackFillMatrix.topLeft.multiplyAlpha(this.opacity), trackFillMatrix.topRight.multiplyAlpha(this.opacity),
+            trackFillMatrix.bottomLeft.multiplyAlpha(this.opacity), trackFillMatrix.bottomRight.multiplyAlpha(this.opacity)
+        )
+
         val notchMatrix = ColorConfig.separateMatrix(if (isFocused) ThemeConfig.sliderNotchFocused else ThemeConfig.sliderNotch)
-        graphics.fill(this.x - 1 + (this.width * normalized), this.y + 1, this.x + (this.width * normalized) + 1, this.y + this.height,
+        graphics.fill(this.x - 1 + (this.width * normalized), this.y, this.x + (this.width * normalized) + 1, this.y + this.height,
             notchMatrix.topLeft.multiplyAlpha(this.opacity), notchMatrix.topRight.multiplyAlpha(this.opacity),
             notchMatrix.bottomLeft.multiplyAlpha(this.opacity), notchMatrix.bottomRight.multiplyAlpha(this.opacity)
         )
@@ -85,7 +91,7 @@ class SliderElement<T : Number>(
 
     private fun calculateCurrentValue(mouseX: Int): Float {
         val step = this.step / (this.max.minus(this.min))
-        val delta = clamp((mouseX - this.x) / this.width, 0f, 1f)
+        val delta = clamp(0f, 1f, (mouseX - this.x) / this.width)
         return this.min + (round(delta / step) * step) * (this.max - this.min)
     }
 

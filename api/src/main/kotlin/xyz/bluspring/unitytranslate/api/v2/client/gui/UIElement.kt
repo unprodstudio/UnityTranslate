@@ -10,7 +10,7 @@ import xyz.bluspring.unitytranslate.api.v2.util.ARGBHelper
 
 abstract class UIElement {
     private val enableDebug: Boolean // don't optimize this into a const, this is so we can use hotswap to toggle debug display.
-        get() = true
+        get() = false
 
 
     protected val children: List<UIElement>

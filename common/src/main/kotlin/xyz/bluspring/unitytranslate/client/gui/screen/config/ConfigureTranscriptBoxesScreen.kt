@@ -100,7 +100,7 @@ class ConfigureTranscriptBoxesScreen(private val onExit: () -> Unit = { ClientPl
             for (container in this.renderer.containers.reversed()) {
                 val bounds = container.bounds().inflate(2)
                 if (bounds.containsPoint(mouseX.toInt(), mouseY.toInt())) {
-                    this.createContextBox(mouseX.toFloat(), mouseY.toFloat(), container.createContextBox(mouseX.toFloat(), mouseY.toFloat()))
+                    this.createContextBox(mouseX.toFloat(), mouseY.toFloat(), container.createContextBox(mouseX.toFloat(), mouseY.toFloat(), this::closeContextBox))
                     return true
                 }
             }
